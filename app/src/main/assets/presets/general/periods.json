@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "periods": [
+    {
+      "id": "p-morning",
+      "name": "晨间",
+      "startMinute": 360,
+      "endMinute": 480,
+      "color": "#FFF2C94C",
+      "tagIds": ["t-exercise", "t-focus", "t-commute"]
+    },
+    {
+      "id": "p-work",
+      "name": "工作时间",
+      "startMinute": 480,
+      "endMinute": 720,
+      "color": "#FF6B9CE1",
+      "tagIds": ["t-work", "t-focus"]
+    },
+    {
+      "id": "p-lunch",
+      "name": "午休",
+      "startMinute": 720,
+      "endMinute": 840,
+      "color": "#FF52B788",
+      "tagIds": ["t-meal", "t-rest"]
+    },
+    {
+      "id": "p-afternoon",
+      "name": "午后",
+      "startMinute": 840,
+      "endMinute": 1080,
+      "color": "#FFE17055",
+      "tagIds": ["t-work", "t-study"]
+    },
+    {
+      "id": "p-evening",
+      "name": "晚间",
+      "startMinute": 1080,
+      "endMinute": 1320,
+      "color": "#FF9B51E0",
+      "tagIds": ["t-rest", "t-exercise", "t-study", "t-commute"]
+    },
+    {
+      "id": "p-night",
+      "name": "深夜",
+      "startMinute": 1320,
+      "endMinute": 360,
+      "color": "#FF546E7A",
+      "tagIds": ["t-rest"]
+    }
+  ]
+}

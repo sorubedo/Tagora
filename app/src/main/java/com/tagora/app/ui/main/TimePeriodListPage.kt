@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -26,7 +25,7 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -44,6 +43,7 @@ import com.tagora.app.data.model.typeEnum
 import com.tagora.app.theme.TagoraTheme
 import com.tagora.app.ui.components.CardGroup
 import com.tagora.app.ui.components.CardGroupItem
+import com.tagora.app.ui.timeperiod.components.TagChip
 import com.tagora.app.util.dayOfWeeksText
 import com.tagora.app.util.minutesToTimeString
 
@@ -100,13 +100,13 @@ fun TimePeriodListPage(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 // 日时段分组
-                if (dailyPeriods.isNotEmpty()) PeriodGroupSection(title = "日时段", periods = dailyPeriods, tags = tags, onClick = onDailyPeriodClick)
+                if (dailyPeriods.isNotEmpty()) PeriodGroupSection(title = "日时段", periods = dailyPeriods, tags = tags, activeTagIds = activeTagIds, onClick = onDailyPeriodClick)
                 // 周时段分组
-                if (weeklyPeriods.isNotEmpty()) PeriodGroupSection(title = "周时段", periods = weeklyPeriods, tags = tags, onClick = onWeeklyPeriodClick)
+                if (weeklyPeriods.isNotEmpty()) PeriodGroupSection(title = "周时段", periods = weeklyPeriods, tags = tags, activeTagIds = activeTagIds, onClick = onWeeklyPeriodClick)
                 // 日期时段分组
-                if (datePeriods.isNotEmpty()) PeriodGroupSection(title = "日期时段", periods = datePeriods, tags = tags, onClick = onDatePeriodClick)
+                if (datePeriods.isNotEmpty()) PeriodGroupSection(title = "日期时段", periods = datePeriods, tags = tags, activeTagIds = activeTagIds, onClick = onDatePeriodClick)
                 // 死线时段分组
-                if (deadlinePeriods.isNotEmpty()) PeriodGroupSection(title = "死线时段", periods = deadlinePeriods, tags = tags, onClick = onDeadlinePeriodClick)
+                if (deadlinePeriods.isNotEmpty()) PeriodGroupSection(title = "死线时段", periods = deadlinePeriods, tags = tags, activeTagIds = activeTagIds, onClick = onDeadlinePeriodClick)
             }
         }
 
@@ -168,6 +168,7 @@ private fun LazyListScope.PeriodGroupSection(
     title: String,
     periods: List<TimePeriod>,
     tags: Map<String, Tag>,
+    activeTagIds: Set<String>,
     onClick: (TimePeriod) -> Unit,
 ) {
     item {
@@ -178,7 +179,11 @@ private fun LazyListScope.PeriodGroupSection(
                     onClick = { onClick(period) },
                     isLast = index == periods.lastIndex,
                 ) {
-                    PeriodListItem(period = period, periodTags = periodTags)
+                    PeriodListItem(
+                        period = period,
+                        periodTags = periodTags,
+                        activeTagIds = activeTagIds,
+                    )
                 }
             }
         }
@@ -190,6 +195,7 @@ private fun LazyListScope.PeriodGroupSection(
 private fun PeriodListItem(
     period: TimePeriod,
     periodTags: List<Tag>,
+    activeTagIds: Set<String> = emptySet(),
 ) {
     val color = Color(AndroidColor.parseColor(period.color))
 
@@ -232,16 +238,10 @@ private fun PeriodListItem(
                         horizontalArrangement = Arrangement.spacedBy(4.dp),
                     ) {
                         periodTags.take(2).forEach { tag ->
-                            Surface(
-                                shape = RoundedCornerShape(50),
-                                color = MaterialTheme.colorScheme.tertiaryContainer,
-                            ) {
-                                Text(
-                                    text = tag.name,
-                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
-                                    style = MaterialTheme.typography.labelSmall,
-                                )
-                            }
+                            TagChip(
+                                tag = tag,
+                                selected = true,
+                            )
                         }
                         if (periodTags.size > 2) {
                             Text(
@@ -300,6 +300,7 @@ fun TimePeriodListPagePreview() {
             datePeriods = sampleDate,
             deadlinePeriods = emptyList(),
             tags = sampleTags,
+            activeTagIds = emptySet(),
             onDailyPeriodClick = {},
             onWeeklyPeriodClick = {},
             onDatePeriodClick = {},

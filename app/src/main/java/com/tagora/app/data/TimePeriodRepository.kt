@@ -2,13 +2,13 @@ package com.tagora.app.data
 
 import android.content.Context
 import android.net.Uri
+import com.tagora.app.data.model.MergedFullConfig
 import com.tagora.app.data.model.PeriodConfig
 import com.tagora.app.data.model.Tag
 import com.tagora.app.data.model.TagConfig
 import com.tagora.app.data.model.Task
 import com.tagora.app.data.model.TaskConditionSerializersModule
 import com.tagora.app.data.model.TimePeriod
-import com.tagora.app.data.AssetPathResolver
 import com.tagora.app.data.preset.PresetProvider
 import com.tagora.app.data.preset.PresetRegistry
 import kotlinx.coroutines.Dispatchers
@@ -26,6 +26,7 @@ data class FullImportResult(
     val datePeriods: List<TimePeriod>,
     val deadlinePeriods: List<TimePeriod> = emptyList(),
     val tasks: List<Task> = emptyList(),
+    val completedTasks: List<Task> = emptyList(),
 )
 
 interface TimePeriodRepository {
@@ -47,7 +48,7 @@ interface TimePeriodRepository {
     suspend fun resetWeekPeriods(firstDate: String)
     suspend fun exportTagsToUri(uri: Uri)
     suspend fun exportPeriodsToUri(uri: Uri)
-    suspend fun exportAllToUri(uri: Uri, tasks: List<Task> = emptyList())
+    suspend fun exportAllToUri(uri: Uri, tasks: List<Task> = emptyList(), completedTasks: List<Task> = emptyList())
     suspend fun importTagsFromUri(uri: Uri): List<Tag>
     suspend fun importPeriodsFromUri(uri: Uri): List<TimePeriod>
     suspend fun importFromUri(uri: Uri): Pair<List<Tag>, List<TimePeriod>>
@@ -116,9 +117,6 @@ class DefaultTimePeriodRepository(
     /**
      * 通用的默认数据加载策略：优先从 PresetProvider 读取，
      * 失败时回退到内置默认预设（根级 default_*.json）。
-     *
-     * 注意：回退时使用 null（根级默认）而非 prefs.selectedPreset，
-     * 因为 selectedPreset 可能是外部插件 ID，AssetPathResolver 无法解析。
      */
     private suspend fun <T> loadDefaultWithProvider(
         fileName: String,
@@ -132,16 +130,10 @@ class DefaultTimePeriodRepository(
                 android.util.Log.w("TimePeriodRepo", "从 PresetProvider 加载 $fileName 失败，回退到内置默认预设", e)
             }
         }
-        // 回退：使用内置默认预设（null → 根级 default_*.json）
-        val assetName = AssetPathResolver.resolve(null, fileName)
-        return when (fileName) {
-            "tags.json" -> tagsRepo.loadAndWriteDefault(assetName).tags as T
-            "periods.json" -> periodsRepo.loadAndWriteDefault(assetName).periods as T
-            "weekly_periods.json" -> weeklyPeriodsRepo.loadAndWriteDefault(assetName).periods as T
-            "date_periods.json" -> datePeriodsRepo.loadAndWriteDefault(assetName).periods as T
-            "deadline_periods.json" -> deadlinePeriodsRepo.loadAndWriteDefault(assetName).periods as T
-            else -> throw IllegalArgumentException("未知的预设文件: $fileName")
-        }
+        // 回退：使用内置默认预设（即未选择任何预设时的根级 default_*.json）
+        val defaultProvider = PresetRegistry.getProvider(null)
+            ?: throw IllegalStateException("内置默认预设未注册")
+        return fromProvider(defaultProvider)
     }
 
     // ── Reset Week Periods ────────────────────────────────────────
@@ -184,18 +176,8 @@ class DefaultTimePeriodRepository(
         } ?: throw IOException("无法写入文件")
     }
 
-    override suspend fun exportAllToUri(uri: Uri, tasks: List<Task>) = withContext(Dispatchers.IO) {
+    override suspend fun exportAllToUri(uri: Uri, tasks: List<Task>, completedTasks: List<Task>) = withContext(Dispatchers.IO) {
         context.contentResolver.openOutputStream(uri)?.use { out ->
-            @kotlinx.serialization.Serializable
-            data class MergedFullConfig(
-                val version: Int = 5,
-                val tags: List<Tag> = emptyList(),
-                val periods: List<TimePeriod> = emptyList(),
-                val weeklyPeriods: List<TimePeriod> = emptyList(),
-                val datePeriods: List<TimePeriod> = emptyList(),
-                val deadlinePeriods: List<TimePeriod> = emptyList(),
-                val tasks: List<Task> = emptyList(),
-            )
             val data = json.encodeToString(
                 MergedFullConfig.serializer(),
                 MergedFullConfig(
@@ -205,6 +187,7 @@ class DefaultTimePeriodRepository(
                     datePeriods = datePeriodsRepo.value.periods,
                     deadlinePeriods = deadlinePeriodsRepo.value.periods,
                     tasks = tasks,
+                    completedTasks = completedTasks,
                 ),
             )
             out.write(data.toByteArray())
@@ -258,23 +241,21 @@ class DefaultTimePeriodRepository(
         val text = context.contentResolver.openInputStream(uri)?.bufferedReader()?.readText()
             ?: throw IOException("无法读取文件")
         try {
-            @kotlinx.serialization.Serializable
-            data class MergedFullConfig(
-                val version: Int = 2,
-                val tags: List<Tag> = emptyList(),
-                val periods: List<TimePeriod> = emptyList(),
-                val weeklyPeriods: List<TimePeriod> = emptyList(),
-                val datePeriods: List<TimePeriod> = emptyList(),
-                val deadlinePeriods: List<TimePeriod> = emptyList(),
-                val tasks: List<Task> = emptyList(),
-            )
             val merged = json.decodeFromString<MergedFullConfig>(text)
             saveTags(merged.tags)
             savePeriods(merged.periods)
             saveWeeklyPeriods(merged.weeklyPeriods)
             saveDatePeriods(merged.datePeriods)
             saveDeadlinePeriods(merged.deadlinePeriods)
-            FullImportResult(merged.tags, merged.periods, merged.weeklyPeriods, merged.datePeriods, merged.deadlinePeriods, merged.tasks)
+            FullImportResult(
+                tags = merged.tags,
+                periods = merged.periods,
+                weeklyPeriods = merged.weeklyPeriods,
+                datePeriods = merged.datePeriods,
+                deadlinePeriods = merged.deadlinePeriods,
+                tasks = merged.tasks,
+                completedTasks = merged.completedTasks,
+            )
         } catch (_: Exception) {
             val (tags, periods) = importFromUri(uri)
             FullImportResult(

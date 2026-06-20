@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.automirrored.filled.Label
@@ -50,6 +51,7 @@ fun AppDrawerContent(
     onTagManageClick: () -> Unit,
     onSettingsClick: () -> Unit,
     onCompletedTasksClick: () -> Unit,
+    onDeepSeekClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     ModalDrawerSheet(
@@ -181,11 +183,28 @@ fun AppDrawerContent(
             // 底部分隔
             HorizontalDivider()
 
-            // 设置按钮（右下对齐）
+            // 底部按钮行（DeepSeek AI + 设置）
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End,
             ) {
+                // AI 表单按钮
+                Surface(
+                    onClick = onDeepSeekClick,
+                    shape = CircleShape,
+                    color = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onSurface,
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.AutoAwesome,
+                        contentDescription = "AI 表单",
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .size(20.dp),
+                    )
+                }
+                Spacer(Modifier.width(8.dp))
+                // 设置按钮
                 Surface(
                     onClick = onSettingsClick,
                     shape = CircleShape,
@@ -218,6 +237,7 @@ fun AppDrawerContentPreview() {
             onTagManageClick = {},
             onSettingsClick = {},
             onCompletedTasksClick = {},
+            onDeepSeekClick = {},
         )
     }
 }

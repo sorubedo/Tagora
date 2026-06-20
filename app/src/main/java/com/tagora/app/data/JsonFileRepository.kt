@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.withContext
+import com.tagora.app.data.preset.PresetProvider
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
 import java.io.File
@@ -76,4 +77,21 @@ open class JsonFileRepository<T>(
         file.writeText(json.encodeToString(serializer, data))
         return data
     }
+
+    /**
+     * 从 [PresetProvider] 读取默认配置并写入 filesDir。
+     *
+     * 与 [loadAndWriteDefault] (asset 版本) 功能相同，但数据来源是 [PresetProvider]，
+     * 支持从外部插件 ContentProvider 加载预设数据。
+     *
+     * @param provider 预设数据提供者
+     * @param fileName 简单文件名，如 "tags.json"
+     */
+    internal suspend fun loadAndWriteDefault(provider: PresetProvider, fileName: String): T =
+        withContext(Dispatchers.IO) {
+            val text = provider.readFile(fileName)
+            val data = json.decodeFromString(serializer, text)
+            file.writeText(json.encodeToString(serializer, data))
+            data
+        }
 }

@@ -3,12 +3,20 @@ package com.tagora.app.data
 /**
  * 集中管理默认配置 asset 文件路径解析。
  *
- * 所有需要读取默认配置文件的代码都应通过此类解析路径，
- * 以确保预设切换后能正确加载对应预设的 asset 文件。
+ * @deprecated 请使用 [com.tagora.app.data.preset.PresetRegistry.getSelectedProvider]
+ *             及 [com.tagora.app.data.preset.BuiltInAssetPresetProvider] 替代。
+ *             此类保留仅用于向后兼容的回退路径。
  *
  * - [selectedPreset] 为 null 时，回退到根级 `default_<fileName>`（向后兼容）
  * - [selectedPreset] 非 null 时，解析为 `presets/<preset>/<fileName>`
  */
+@Deprecated(
+    message = "使用 PresetRegistry.getSelectedProvider() 及 BuiltInAssetPresetProvider 替代",
+    replaceWith = ReplaceWith(
+        "PresetRegistry.getSelectedProvider(prefs)",
+        "com.tagora.app.data.preset.PresetRegistry",
+    ),
+)
 object AssetPathResolver {
 
     private const val PRESETS_DIR = "presets"

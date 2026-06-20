@@ -5,7 +5,18 @@ package com.tagora.app.data.model
  *
  * 每种预设对应 [assets/presets/{key}/] 下的一组默认 JSON 配置文件。
  * 切换预设后，通过"重置为默认"功能应用新的默认配置。
+ *
+ * @deprecated 请使用 [com.tagora.app.data.preset.PresetRegistry] 和
+ *             [com.tagora.app.data.preset.PresetMetadata] 替代。
+ *             此枚举信息已迁移到 [com.tagora.app.data.preset.BuiltInAssetPresetProvider] 工厂方法中。
  */
+@Deprecated(
+    message = "使用 PresetRegistry + PresetMetadata 替代",
+    replaceWith = ReplaceWith(
+        "PresetRegistry.getAllProviders()",
+        "com.tagora.app.data.preset.PresetRegistry",
+    ),
+)
 enum class PresetType(val key: String, val displayName: String) {
     /** 通用预设：基础日/周时段，无学期周次 */
     GENERAL("general", "通用"),

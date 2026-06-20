@@ -53,7 +53,7 @@ import androidx.core.content.ContextCompat
 import com.tagora.app.BuildConfig
 import com.tagora.app.data.AppPreferences
 import com.tagora.app.data.RepositoryProvider
-import com.tagora.app.data.model.PresetType
+import com.tagora.app.data.preset.PresetRegistry
 import com.tagora.app.domain.usecase.CleanupUnusedUseCase
 import com.tagora.app.domain.usecase.ResetToDefaultUseCase
 import com.tagora.app.service.TagActivationForegroundService
@@ -105,8 +105,17 @@ fun SettingsPage(
     // 配置预设
     var currentPreset by remember { mutableStateOf(prefs.selectedPreset) }
     var showPresetSwitchDialog by remember { mutableStateOf(false) }
-    var pendingPreset by remember { mutableStateOf<PresetType?>(null) }
+    var pendingProviderId by remember { mutableStateOf<String?>(null) }
+    var pendingProviderName by remember { mutableStateOf("") }
     val resetUseCase = remember { ResetToDefaultUseCase(repository, taskRepo, completedTaskRepo) }
+
+    // 旧 key 规范化：将 "general"/"semester" 映射为新的 ID 格式
+    fun normalizePresetKey(key: String?): String? = when (key) {
+        null -> null
+        "general" -> "builtin:general"
+        "semester" -> "builtin:semester"
+        else -> key
+    }
 
     // 通知权限请求（Android 13+）
     val notificationPermissionLauncher = rememberLauncherForActivityResult(
@@ -390,16 +399,23 @@ fun SettingsPage(
             }
 
             // 配置预设
-            CardGroup(title = { Text("配置预设") }) {
-                PresetType.entries.forEachIndexed { index, preset ->
+            val allProviders = remember { PresetRegistry.getAllProviders() }
+            val builtinProviders = allProviders.filter { it.metadata.source == "builtin" }
+            val pluginProviders = allProviders.filter { it.metadata.source == "plugin" }
+
+            // 内置预设
+            CardGroup(title = { Text("内置预设") }) {
+                builtinProviders.forEachIndexed { index, provider ->
+                    val metadata = provider.metadata
                     CardGroupItem(
                         onClick = {
-                            if (currentPreset != preset.key) {
-                                pendingPreset = preset
+                            if (normalizePresetKey(currentPreset) != metadata.id) {
+                                pendingProviderId = metadata.id
+                                pendingProviderName = metadata.name
                                 showPresetSwitchDialog = true
                             }
                         },
-                        isLast = index == PresetType.entries.lastIndex,
+                        isLast = index == builtinProviders.lastIndex && pluginProviders.isEmpty(),
                     ) {
                         Row(
                             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
@@ -407,22 +423,65 @@ fun SettingsPage(
                         ) {
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = preset.displayName,
+                                    text = metadata.name,
                                     style = MaterialTheme.typography.bodyLarge,
                                 )
                                 Text(
-                                    text = when (preset) {
-                                        PresetType.GENERAL -> "基础日/周时段，不含学期周次"
-                                        PresetType.SEMESTER -> "完整课程表 + 学期周次，适合学生使用"
-                                    },
+                                    text = metadata.description,
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
                             }
                             RadioButton(
-                                selected = currentPreset == preset.key,
+                                selected = normalizePresetKey(currentPreset) == metadata.id,
                                 onClick = null, // CardGroupItem onClick 处理
                             )
+                        }
+                    }
+                }
+            }
+
+            // 插件预设（仅在有外部插件时显示）
+            if (pluginProviders.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(16.dp))
+                CardGroup(title = { Text("插件预设") }) {
+                    pluginProviders.forEachIndexed { index, provider ->
+                        val metadata = provider.metadata
+                        CardGroupItem(
+                            onClick = {
+                                if (normalizePresetKey(currentPreset) != metadata.id) {
+                                    pendingProviderId = metadata.id
+                                    pendingProviderName = metadata.name
+                                    showPresetSwitchDialog = true
+                                }
+                            },
+                            isLast = index == pluginProviders.lastIndex,
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = metadata.name,
+                                        style = MaterialTheme.typography.bodyLarge,
+                                    )
+                                    Text(
+                                        text = metadata.description,
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    )
+                                    Text(
+                                        text = "作者：${metadata.author}  |  版本：${metadata.version}",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                                    )
+                                }
+                                RadioButton(
+                                    selected = normalizePresetKey(currentPreset) == metadata.id,
+                                    onClick = null,
+                                )
+                            }
                         }
                     }
                 }
@@ -543,7 +602,12 @@ fun SettingsPage(
     }
 
     if (showResetDialog) {
-        val presetDisplayName = PresetType.fromKey(currentPreset).displayName
+        val resolvedId = normalizePresetKey(currentPreset)
+        val presetDisplayName = if (resolvedId != null) {
+            PresetRegistry.getProvider(resolvedId)?.metadata?.name ?: "默认"
+        } else {
+            "默认"
+        }
         AlertDialog(
             onDismissRequest = { showResetDialog = false },
             title = { Text("重置为默认配置？") },
@@ -553,12 +617,17 @@ fun SettingsPage(
             confirmButton = {
                 TextButton(onClick = {
                     scope.launch {
-                        resetUseCase.execute(includeTasks = true)
-                        // 更新第一周日期显示
-                        val datePeriods = repository.loadDefaultDatePeriods()
-                        val week1 = datePeriods.find { it.tagIds.contains("t-w1") }
-                        weekFirstDate = week1?.startDate ?: "2026-03-02"
-                        Toast.makeText(context, "已重置为「${presetDisplayName}」预设", Toast.LENGTH_SHORT).show()
+                        try {
+                            resetUseCase.execute(includeTasks = true)
+                            // 更新第一周日期显示
+                            val datePeriods = repository.loadDefaultDatePeriods()
+                            val week1 = datePeriods.find { it.tagIds.contains("t-w1") }
+                            weekFirstDate = week1?.startDate ?: "2026-03-02"
+                            Toast.makeText(context, "已重置为「${presetDisplayName}」预设", Toast.LENGTH_SHORT).show()
+                        } catch (e: Exception) {
+                            android.util.Log.e("SettingsPage", "重置预设失败", e)
+                            Toast.makeText(context, "重置失败：${e.message}", Toast.LENGTH_LONG).show()
+                        }
                     }
                     showResetDialog = false
                 }) {
@@ -574,20 +643,19 @@ fun SettingsPage(
     }
 
     // 预设切换确认对话框
-    if (showPresetSwitchDialog && pendingPreset != null) {
+    if (showPresetSwitchDialog && pendingProviderId != null) {
         AlertDialog(
             onDismissRequest = { showPresetSwitchDialog = false },
             title = { Text("切换配置预设？") },
             text = {
-                Text("切换到「${pendingPreset!!.displayName}」预设后，当前数据不会自动改变。\n\n如需应用新预设的默认配置，请点击「重置为默认」。")
+                Text("切换到「${pendingProviderName}」后，当前数据不会自动改变。\n\n如需应用新预设的默认配置，请点击「重置为默认」。")
             },
             confirmButton = {
                 TextButton(onClick = {
-                    val preset = pendingPreset!!
-                    prefs.selectedPreset = preset.key
-                    currentPreset = preset.key
+                    prefs.selectedPreset = pendingProviderId
+                    currentPreset = pendingProviderId
                     showPresetSwitchDialog = false
-                    Toast.makeText(context, "已切换到「${preset.displayName}」预设", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "已切换到「${pendingProviderName}」预设", Toast.LENGTH_SHORT).show()
                 }) {
                     Text("切换")
                 }

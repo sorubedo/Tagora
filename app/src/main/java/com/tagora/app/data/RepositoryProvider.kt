@@ -1,6 +1,7 @@
 package com.tagora.app.data
 
 import android.content.Context
+import com.tagora.app.data.preset.PresetRegistry
 import com.tagora.app.domain.engine.TagActivationEngine
 
 /**
@@ -22,11 +23,16 @@ object RepositoryProvider {
     @Volatile
     private var completedTaskInstance: DefaultCompletedTaskRepository? = null
 
+    @Volatile
+    private var prefs: AppPreferences? = null
+
     fun get(context: Context): DefaultTimePeriodRepository {
         return instance ?: synchronized(this) {
+            // 确保 PresetRegistry 和 AppPreferences 初始化
+            ensureInitialized(context.applicationContext)
             instance ?: DefaultTimePeriodRepository(
                 context.applicationContext,
-                prefs = AppPreferences(context.applicationContext),
+                prefs = prefs,
             ).also {
                 instance = it
             }
@@ -35,7 +41,11 @@ object RepositoryProvider {
 
     fun getTaskRepo(context: Context): DefaultTaskRepository {
         return taskInstance ?: synchronized(this) {
-            taskInstance ?: DefaultTaskRepository(context.applicationContext).also {
+            ensureInitialized(context.applicationContext)
+            taskInstance ?: DefaultTaskRepository(
+                context.applicationContext,
+                prefs = prefs,
+            ).also {
                 taskInstance = it
             }
         }
@@ -60,8 +70,35 @@ object RepositoryProvider {
 
     fun getCompletedTaskRepo(context: Context): DefaultCompletedTaskRepository {
         return completedTaskInstance ?: synchronized(this) {
-            completedTaskInstance ?: DefaultCompletedTaskRepository(context.applicationContext).also {
+            ensureInitialized(context.applicationContext)
+            completedTaskInstance ?: DefaultCompletedTaskRepository(
+                context.applicationContext,
+                prefs = prefs,
+            ).also {
                 completedTaskInstance = it
+            }
+        }
+    }
+
+    /**
+     * 获取 AppPreferences 单例。
+     */
+    fun getPrefs(context: Context): AppPreferences {
+        ensureInitialized(context.applicationContext)
+        return prefs!!
+    }
+
+    /**
+     * 懒初始化 PresetRegistry 和 AppPreferences。
+     * 幂等操作，多次调用仅首次生效。
+     */
+    private fun ensureInitialized(appContext: Context) {
+        if (prefs == null) {
+            synchronized(this) {
+                if (prefs == null) {
+                    prefs = AppPreferences(appContext)
+                    PresetRegistry.init(appContext)
+                }
             }
         }
     }

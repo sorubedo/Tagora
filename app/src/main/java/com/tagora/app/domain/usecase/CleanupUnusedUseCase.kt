@@ -10,6 +10,7 @@ import com.tagora.app.data.model.TagConfig
 import com.tagora.app.data.model.TimePeriod
 import com.tagora.app.data.model.collectTagIds
 import com.tagora.app.data.model.isIncomplete
+import com.tagora.app.data.preset.PresetRegistry
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
@@ -44,14 +45,39 @@ class CleanupUnusedUseCase(
         encodeDefaults = true
     }
 
-    /** 从当前预设的 assets 读取默认标签 ID 集合（仅读取，不写入） */
-    private fun loadDefaultTagIds(): Set<String> = runCatching {
-        val assetName = AssetPathResolver.resolve(prefs?.selectedPreset, "tags.json")
-        val text = context.assets.open(assetName).bufferedReader().use { it.readText() }
-        json.decodeFromString<TagConfig>(text).tags.map { it.id }.toSet()
-    }.getOrDefault(emptySet())
+    /**
+     * 从当前预设读取默认标签 ID 集合（仅读取，不写入）。
+     * 优先使用 PresetRegistry（支持内置和插件预设），失败时回退到 AssetPathResolver。
+     */
+    private suspend fun loadDefaultTagIds(): Set<String> {
+        val provider = PresetRegistry.getSelectedProvider(prefs)
+        if (provider != null) {
+            return runCatching {
+                json.decodeFromString<TagConfig>(provider.readFile("tags.json")).tags.map { it.id }.toSet()
+            }.getOrDefault(emptySet())
+        }
+        // 回退到 assets 直接读取
+        return runCatching {
+            val assetName = AssetPathResolver.resolve(prefs?.selectedPreset, "tags.json")
+            val text = context.assets.open(assetName).bufferedReader().use { it.readText() }
+            json.decodeFromString<TagConfig>(text).tags.map { it.id }.toSet()
+        }.getOrDefault(emptySet())
+    }
 
-    private fun loadDefaultPeriodIds(): Set<String> {
+    /** @see loadDefaultTagIds */
+    private suspend fun loadDefaultPeriodIds(): Set<String> {
+        val provider = PresetRegistry.getSelectedProvider(prefs)
+        if (provider != null) {
+            val ids = mutableSetOf<String>()
+            val fileNames = listOf("periods.json", "weekly_periods.json", "date_periods.json", "deadline_periods.json")
+            for (name in fileNames) {
+                runCatching {
+                    json.decodeFromString<PeriodConfig>(provider.readFile(name)).periods.mapTo(ids) { it.id }
+                }
+            }
+            return ids
+        }
+        // 回退到 assets 直接读取
         val ids = mutableSetOf<String>()
         val fileNames = listOf("periods.json", "weekly_periods.json", "date_periods.json", "deadline_periods.json")
         for (name in fileNames) {

@@ -4,6 +4,7 @@ import android.content.Context
 import com.tagora.app.data.model.Task
 import com.tagora.app.data.model.TaskConditionSerializersModule
 import com.tagora.app.data.model.TaskConfig
+import com.tagora.app.data.preset.PresetRegistry
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -18,6 +19,7 @@ interface TaskRepository {
 
 class DefaultTaskRepository(
     context: Context,
+    private val prefs: AppPreferences? = null,
     json: Json = Json {
         serializersModule = TaskConditionSerializersModule
         ignoreUnknownKeys = true
@@ -39,6 +41,16 @@ class DefaultTaskRepository(
     }
 
     override suspend fun loadDefaultTasks(): List<Task> = withContext(Dispatchers.IO) {
-        loadAndWriteDefault().tasks
+        val provider = PresetRegistry.getSelectedProvider(prefs)
+        if (provider != null) {
+            try {
+                loadAndWriteDefault(provider, "tasks.json").tasks
+            } catch (e: Exception) {
+                android.util.Log.w("TaskRepo", "从 PresetProvider 加载 tasks.json 失败，回退到内置预设", e)
+                loadAndWriteDefault().tasks
+            }
+        } else {
+            loadAndWriteDefault().tasks
+        }
     }
 }

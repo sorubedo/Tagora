@@ -9,6 +9,8 @@ import com.tagora.app.data.model.Task
 import com.tagora.app.data.model.TaskConditionSerializersModule
 import com.tagora.app.data.model.TimePeriod
 import com.tagora.app.data.AssetPathResolver
+import com.tagora.app.data.preset.PresetProvider
+import com.tagora.app.data.preset.PresetRegistry
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -96,27 +98,56 @@ class DefaultTimePeriodRepository(
     // ── Load Defaults ─────────────────────────────────────────────
 
     override suspend fun loadDefaultTags() = withContext(Dispatchers.IO) {
-        tagsRepo.loadAndWriteDefault(AssetPathResolver.resolve(prefs?.selectedPreset, "tags.json")).tags
+        loadDefaultWithProvider("tags.json") { tagsRepo.loadAndWriteDefault(it, "tags.json").tags }
     }
     override suspend fun loadDefaultPeriods() = withContext(Dispatchers.IO) {
-        periodsRepo.loadAndWriteDefault(AssetPathResolver.resolve(prefs?.selectedPreset, "periods.json")).periods
+        loadDefaultWithProvider("periods.json") { periodsRepo.loadAndWriteDefault(it, "periods.json").periods }
     }
     override suspend fun loadDefaultWeeklyPeriods() = withContext(Dispatchers.IO) {
-        weeklyPeriodsRepo.loadAndWriteDefault(AssetPathResolver.resolve(prefs?.selectedPreset, "weekly_periods.json")).periods
+        loadDefaultWithProvider("weekly_periods.json") { weeklyPeriodsRepo.loadAndWriteDefault(it, "weekly_periods.json").periods }
     }
     override suspend fun loadDefaultDatePeriods() = withContext(Dispatchers.IO) {
-        datePeriodsRepo.loadAndWriteDefault(AssetPathResolver.resolve(prefs?.selectedPreset, "date_periods.json")).periods
+        loadDefaultWithProvider("date_periods.json") { datePeriodsRepo.loadAndWriteDefault(it, "date_periods.json").periods }
     }
     override suspend fun loadDefaultDeadlinePeriods() = withContext(Dispatchers.IO) {
-        deadlinePeriodsRepo.loadAndWriteDefault(AssetPathResolver.resolve(prefs?.selectedPreset, "deadline_periods.json")).periods
+        loadDefaultWithProvider("deadline_periods.json") { deadlinePeriodsRepo.loadAndWriteDefault(it, "deadline_periods.json").periods }
+    }
+
+    /**
+     * 通用的默认数据加载策略：优先从 PresetProvider 读取，
+     * 失败时回退到内置默认预设（根级 default_*.json）。
+     *
+     * 注意：回退时使用 null（根级默认）而非 prefs.selectedPreset，
+     * 因为 selectedPreset 可能是外部插件 ID，AssetPathResolver 无法解析。
+     */
+    private suspend fun <T> loadDefaultWithProvider(
+        fileName: String,
+        fromProvider: suspend (PresetProvider) -> T,
+    ): T {
+        val provider = PresetRegistry.getSelectedProvider(prefs)
+        if (provider != null) {
+            try {
+                return fromProvider(provider)
+            } catch (e: Exception) {
+                android.util.Log.w("TimePeriodRepo", "从 PresetProvider 加载 $fileName 失败，回退到内置默认预设", e)
+            }
+        }
+        // 回退：使用内置默认预设（null → 根级 default_*.json）
+        val assetName = AssetPathResolver.resolve(null, fileName)
+        return when (fileName) {
+            "tags.json" -> tagsRepo.loadAndWriteDefault(assetName).tags as T
+            "periods.json" -> periodsRepo.loadAndWriteDefault(assetName).periods as T
+            "weekly_periods.json" -> weeklyPeriodsRepo.loadAndWriteDefault(assetName).periods as T
+            "date_periods.json" -> datePeriodsRepo.loadAndWriteDefault(assetName).periods as T
+            "deadline_periods.json" -> deadlinePeriodsRepo.loadAndWriteDefault(assetName).periods as T
+            else -> throw IllegalArgumentException("未知的预设文件: $fileName")
+        }
     }
 
     // ── Reset Week Periods ────────────────────────────────────────
 
     override suspend fun resetWeekPeriods(firstDate: String) = withContext(Dispatchers.IO) {
-        val defaultPeriods = datePeriodsRepo.loadAndWriteDefault(
-            AssetPathResolver.resolve(prefs?.selectedPreset, "date_periods.json")
-        ).periods
+        val defaultPeriods = loadDefaultDatePeriods()
         val weekTagIds = defaultPeriods.flatMap { it.tagIds }.toSet()
         val currentPeriods = datePeriodsRepo.value.periods
 

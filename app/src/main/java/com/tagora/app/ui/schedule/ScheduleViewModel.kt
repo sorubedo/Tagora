@@ -175,6 +175,22 @@ class ScheduleViewModel(
             }
         }
 
+        // 5. 计算相邻格子合并信息
+        // 规则：对每一列，从上到下遍历行
+        // 如果当前格子与上方格子的任务 ID 集合完全相同（且都非空），则标记当前格子为"合并"
+        val cellMergeMap = mutableMapOf<Pair<Int, Int>, Boolean>()
+        for (colIdx in weekDays.indices) {
+            for (rowIdx in 1 until classPeriods.size) {
+                val currentTaskIds = cellTaskMap[rowIdx to colIdx]
+                    ?.map { it.id }?.toSet() ?: emptySet()
+                val aboveTaskIds = cellTaskMap[rowIdx - 1 to colIdx]
+                    ?.map { it.id }?.toSet() ?: emptySet()
+                if (currentTaskIds.isNotEmpty() && currentTaskIds == aboveTaskIds) {
+                    cellMergeMap[rowIdx to colIdx] = true
+                }
+            }
+        }
+
         return ScheduleUiState.Ready(
             classPeriods = classPeriods,
             weekDays = weekDays,
@@ -182,6 +198,7 @@ class ScheduleViewModel(
             currentWeekIndex = weekIndex,
             cellTaskMap = cellTaskMap,
             tagsMap = data.tags.associateBy { it.id },
+            cellMergeMap = cellMergeMap,
         )
     }
 

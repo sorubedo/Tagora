@@ -28,5 +28,8 @@ sealed interface ScheduleUiState {
         val cellTaskMap: Map<Pair<Int, Int>, List<Task>>,
         /** 所有标签，keyed by id，用于显示颜色/名称 */
         val tagsMap: Map<String, Tag>,
+        /** 标记哪些格子应与其上方格子合并（任务 ID 集合完全一致时）。
+         *  key = (row, col)，value = true 表示该格子与上方格子内容相同，应隐藏任务文字 */
+        val cellMergeMap: Map<Pair<Int, Int>, Boolean> = emptyMap(),
     ) : ScheduleUiState
 }

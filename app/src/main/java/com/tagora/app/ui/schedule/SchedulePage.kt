@@ -260,6 +260,7 @@ private fun ScheduleReadyContent(
                 weekDays = state.weekDays,
                 cellTaskMap = state.cellTaskMap,
                 tagsMap = state.tagsMap,
+                cellMergeMap = state.cellMergeMap,
                 onTaskClick = onTaskClick,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -345,6 +346,7 @@ private fun ScheduleGrid(
     weekDays: List<TimePeriod>,
     cellTaskMap: Map<Pair<Int, Int>, List<Task>>,
     tagsMap: Map<String, Tag>,
+    cellMergeMap: Map<Pair<Int, Int>, Boolean>,
     onTaskClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -387,9 +389,11 @@ private fun ScheduleGrid(
                     Row {
                         weekDays.forEachIndexed { colIdx, _ ->
                             val tasks = cellTaskMap[rowIdx to colIdx].orEmpty()
+                            val isMergedUp = cellMergeMap[rowIdx to colIdx] == true
                             GridCell(
                                 tasks = tasks,
                                 tagsMap = tagsMap,
+                                isMergedUp = isMergedUp,
                                 onClick = { taskId -> onTaskClick(taskId) },
                                 modifier = Modifier.weight(1f),
                             )
@@ -489,6 +493,7 @@ private fun ClassPeriodLabel(period: TimePeriod) {
 private fun GridCell(
     tasks: List<Task>,
     tagsMap: Map<String, Tag>,
+    isMergedUp: Boolean = false,
     onClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -512,50 +517,52 @@ private fun GridCell(
             MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f),
         ),
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(1.dp),
-            verticalArrangement = Arrangement.spacedBy(1.dp),
-        ) {
-            tasks.take(3).forEach { task ->
-                val taskTagColor = rememberTaskTagColor(task, tagsMap)
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(2.dp))
-                        .background(
-                            (taskTagColor ?: MaterialTheme.colorScheme.primary).copy(alpha = 0.12f),
-                        )
-                        .clickable { onClick(task.id) }
-                        .padding(horizontal = 2.dp, vertical = 1.dp),
-                ) {
-                    Text(
-                        text = task.name,
-                        style = MaterialTheme.typography.labelSmall,
-                        fontWeight = FontWeight.Medium,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                        color = taskTagColor ?: MaterialTheme.colorScheme.onSurface,
-                    )
-                    task.locationText?.let { location ->
+        if (!isMergedUp) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(1.dp),
+                verticalArrangement = Arrangement.spacedBy(1.dp),
+            ) {
+                tasks.take(3).forEach { task ->
+                    val taskTagColor = rememberTaskTagColor(task, tagsMap)
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(2.dp))
+                            .background(
+                                (taskTagColor ?: MaterialTheme.colorScheme.primary).copy(alpha = 0.12f),
+                            )
+                            .clickable { onClick(task.id) }
+                            .padding(horizontal = 2.dp, vertical = 1.dp),
+                    ) {
                         Text(
-                            text = location,
+                            text = task.name,
                             style = MaterialTheme.typography.labelSmall,
-                            maxLines = 1,
+                            fontWeight = FontWeight.Medium,
+                            maxLines = 2,
                             overflow = TextOverflow.Ellipsis,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                            color = taskTagColor ?: MaterialTheme.colorScheme.onSurface,
                         )
+                        task.locationText?.let { location ->
+                            Text(
+                                text = location,
+                                style = MaterialTheme.typography.labelSmall,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                            )
+                        }
                     }
                 }
-            }
-            if (tasks.size > 3) {
-                Text(
-                    text = "+${tasks.size - 3}",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(horizontal = 1.dp),
-                )
+                if (tasks.size > 3) {
+                    Text(
+                        text = "+${tasks.size - 3}",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(horizontal = 1.dp),
+                    )
+                }
             }
         }
     }

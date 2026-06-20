@@ -534,7 +534,7 @@ private fun GridCell(
                         text = task.name,
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.Medium,
-                        maxLines = 1,
+                        maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
                         color = taskTagColor ?: MaterialTheme.colorScheme.onSurface,
                     )

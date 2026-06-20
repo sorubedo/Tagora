@@ -95,10 +95,10 @@ object AiPromptGenerator {
         appendLine()
         appendLine("### 课程的正确建模")
         appendLine()
-        appendLine("课程/固定事件 = Task（type=fixed）。不需要新建标签或 period——三层维度标签通常已在预设中。")
+        appendLine("课程/固定事件 = Task（type=fixed）。不需要新建标签或 period——三层维度标签通常已在预设中。课程名称直接使用学科名，**不要**加「课」后缀（如「数学」而非「数学课」）。")
         appendLine()
-        appendLine("「周二第1-2节数学课（第1-16周）」→ 条件组合三层维度标签：")
-        append("""{"operations":[{"action":"create","target":"task","data":{"name":"数学课","description":"周二第1-2节，第1-16周{{主楼305}}","type":"fixed","condition":"周二 AND (第1节课 OR 第2节课) AND (第1周 OR 第2周 OR 第3周 OR 第4周 OR 第5周 OR 第6周 OR 第7周 OR 第8周 OR 第9周 OR 第10周 OR 第11周 OR 第12周 OR 第13周 OR 第14周 OR 第15周 OR 第16周)"}}]}""")
+        appendLine("「周二第1-2节数学（第1-16周）」→ 条件组合三层维度标签：")
+        append("""{"operations":[{"action":"create","target":"task","data":{"name":"数学","description":"周二第1-2节，第1-16周{{主楼305}}","type":"fixed","condition":"周二 AND (第1节课 OR 第2节课) AND (第1周 OR 第2周 OR 第3周 OR 第4周 OR 第5周 OR 第6周 OR 第7周 OR 第8周 OR 第9周 OR 第10周 OR 第11周 OR 第12周 OR 第13周 OR 第14周 OR 第15周 OR 第16周)"}}]}""")
         appendLine()
         appendLine()
 
@@ -159,7 +159,7 @@ object AiPromptGenerator {
         appendLine("""// normal：弹性任务，条件满足时激活，永久无法满足时自动超时""")
         appendLine("""{"action":"create","target":"task","data":{"name":"午睡","description":"中午休息","type":"normal","condition":"用餐 AND 休息"}}""")
         appendLine("""// fixed：固定事件，条件满足时激活，永久无法满足时自动完成""")
-        appendLine("""{"action":"create","target":"task","data":{"name":"数学课","description":"周二第1-2节","type":"fixed","condition":"周二 AND (第1节课 OR 第2节课)"}}""")
+        appendLine("""{"action":"create","target":"task","data":{"name":"数学","description":"周二第1-2节","type":"fixed","condition":"周二 AND (第1节课 OR 第2节课)"}}""")
         appendLine("""// 查询""")
         appendLine("""{"action":"query","target":"task","data":{"status":"incomplete"}}""")
         appendLine("""// 更新（status=completed 时自动记录完成时间）""")
@@ -294,17 +294,6 @@ object AiPromptGenerator {
         appendLine("分析：考试周是临时状态，用 date period 限定日期范围。标签命名遵循「处于XX中」的状态格式。任务在考试周期间提醒复习。")
         appendLine()
         append("""{"operations":[{"action":"create","target":"tag","data":{"name":"处于考试周中","color":"#FFEF5350"}},{"action":"create","target":"period","data":{"type":"date","name":"期末考","startDate":"2026-06-23","endDate":"2026-06-29","color":"#FFEF5350","tags":["处于考试周中","学习","专注"]}},{"action":"create","target":"task","data":{"name":"期末复习","description":"考试周集中复习","type":"normal","condition":"处于考试周中 AND 学习"}}]}""")
-        appendLine()
-        appendLine()
-
-        // 场景 4：课程
-        appendLine("### 场景 4：课程")
-        appendLine()
-        appendLine("用户：「添加周三第5-6节英语课，第3-18周」")
-        appendLine()
-        appendLine("分析：课程=Task(type=fixed)。所有维度标签（周三、第5节课、第6节课、第3~18周）已由预设提供，不需新建任何标签或 period。直接用三层 AND 组合。地点用 {{教室名}} 嵌入描述中。")
-        appendLine()
-        append("""{"operations":[{"action":"create","target":"task","data":{"name":"英语课","description":"周三第5-6节，第3-18周{{教三楼201}}","type":"fixed","condition":"周三 AND (第5节课 OR 第6节课) AND (第3周 OR 第4周 OR 第5周 OR 第6周 OR 第7周 OR 第8周 OR 第9周 OR 第10周 OR 第11周 OR 第12周 OR 第13周 OR 第14周 OR 第15周 OR 第16周 OR 第17周 OR 第18周)"}}]}""")
         appendLine()
     }
 

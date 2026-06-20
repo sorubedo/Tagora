@@ -39,7 +39,6 @@ import androidx.compose.ui.unit.dp
 import com.tagora.app.data.RepositoryProvider
 import com.tagora.app.data.model.AndCondition
 import com.tagora.app.data.model.MultiTagCondition
-import com.tagora.app.data.model.NotCondition
 import com.tagora.app.data.model.OrCondition
 import com.tagora.app.util.newId
 import com.tagora.app.data.model.Tag
@@ -55,7 +54,7 @@ import kotlinx.coroutines.launch
 
 /**
  * 生成条件的人类可读摘要
- * 例如："工作", "工作 AND 专注", "NOT (休息 OR 用餐)"
+ * 例如："工作", "工作 AND 专注", "(工作 OR 学习)"
  */
 fun conditionSummary(condition: TaskCondition, tagsMap: Map<String, Tag>): String {
     return when (condition) {
@@ -86,10 +85,6 @@ fun conditionSummary(condition: TaskCondition, tagsMap: Map<String, Tag>): Strin
                     else -> "(${conditionSummary(it, tagsMap)})"
                 }
             }
-        }
-
-        is NotCondition -> {
-            "NOT ${conditionSummary(condition.condition, tagsMap)}"
         }
     }
 }

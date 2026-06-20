@@ -53,7 +53,6 @@ import androidx.compose.ui.unit.dp
 import com.tagora.app.data.RepositoryProvider
 import com.tagora.app.data.model.AndCondition
 import com.tagora.app.data.model.MultiTagCondition
-import com.tagora.app.data.model.NotCondition
 import com.tagora.app.data.model.OrCondition
 import com.tagora.app.data.model.Tag
 import com.tagora.app.data.model.Task
@@ -67,14 +66,12 @@ private enum class ConditionType(val label: String) {
     MULTI("多标签(任一)"),
     AND("全部满足 (AND)"),
     OR("任一满足 (OR)"),
-    NOT("排除 (NOT)"),
 }
 
 private fun conditionTypeOf(c: TaskCondition): ConditionType = when (c) {
     is MultiTagCondition -> ConditionType.MULTI
     is AndCondition -> ConditionType.AND
     is OrCondition -> ConditionType.OR
-    is NotCondition -> ConditionType.NOT
 }
 
 /** 按类型创建默认空条件 */
@@ -82,7 +79,6 @@ private fun emptyConditionOf(type: ConditionType): TaskCondition = when (type) {
     ConditionType.MULTI -> MultiTagCondition(emptyList())
     ConditionType.AND -> AndCondition(listOf())
     ConditionType.OR -> OrCondition(listOf())
-    ConditionType.NOT -> NotCondition(MultiTagCondition(emptyList()))
 }
 
 // ── 页面主体 ──────────────────────────────────────────────────
@@ -285,13 +281,6 @@ private fun ConditionNodeEditor(
                     onConditionsChange = { onConditionChange(condition.copy(conditions = it)) },
                 )
 
-                is NotCondition -> NotConditionEditor(
-                    condition = condition,
-                    allTags = allTags,
-                    tagsMap = tagsMap,
-                    onConditionChange = onConditionChange,
-                    onDelete = null, // NOT 内部的节点不能单独删，删整个 NOT 即可
-                )
             }
         }
     }
@@ -399,27 +388,4 @@ private fun GroupConditionEditor(
     }
 }
 
-// ── NOT 条件编辑器 ─────────────────────────────────────────────
 
-@Composable
-private fun NotConditionEditor(
-    condition: NotCondition,
-    allTags: List<Tag>,
-    tagsMap: Map<String, Tag>,
-    onConditionChange: (TaskCondition) -> Unit,
-    onDelete: (() -> Unit)?,
-) {
-    Text(
-        text = "以下条件不满足时此 NOT 节点成立",
-        style = MaterialTheme.typography.labelSmall,
-        color = MaterialTheme.colorScheme.error.copy(alpha = 0.7f),
-        modifier = Modifier.padding(bottom = 6.dp),
-    )
-    ConditionNodeEditor(
-        condition = condition.condition,
-        allTags = allTags,
-        tagsMap = tagsMap,
-        onConditionChange = { onConditionChange(NotCondition(it)) },
-        onDelete = null, // NOT 的子节点不单独删除
-    )
-}

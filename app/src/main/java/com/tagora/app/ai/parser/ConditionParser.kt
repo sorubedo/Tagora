@@ -2,7 +2,6 @@ package com.tagora.app.ai.parser
 
 import com.tagora.app.data.model.AndCondition
 import com.tagora.app.data.model.MultiTagCondition
-import com.tagora.app.data.model.NotCondition
 import com.tagora.app.data.model.OrCondition
 import com.tagora.app.data.model.TaskCondition
 
@@ -12,8 +11,7 @@ import com.tagora.app.data.model.TaskCondition
  * 语法（关键字大小写不敏感）：
  *   expression = or_expr
  *   or_expr    = and_expr ("OR" and_expr)*
- *   and_expr   = not_expr ("AND" not_expr)*
- *   not_expr   = "NOT" atom | atom
+ *   and_expr   = atom ("AND" atom)*
  *   atom       = TAG_NAME | "(" expression ")"
  *
  * 标签名含空格或关键字时需用双引号包裹：`"工作 AND 学习"`
@@ -32,7 +30,6 @@ class ConditionParser(
         data class Tag(val name: String) : Token()
         data object And : Token()
         data object Or : Token()
-        data object Not : Token()
         data object LeftParen : Token()
         data object RightParen : Token()
         data object End : Token()
@@ -60,7 +57,6 @@ class ConditionParser(
                     is Token.Tag -> it.name
                     is Token.And -> "AND"
                     is Token.Or -> "OR"
-                    is Token.Not -> "NOT"
                     is Token.LeftParen -> "("
                     is Token.RightParen -> ")"
                     is Token.End -> ""
@@ -108,7 +104,6 @@ class ConditionParser(
                     when (word.uppercase()) {
                         "AND" -> tokens.add(Token.And)
                         "OR" -> tokens.add(Token.Or)
-                        "NOT" -> tokens.add(Token.Not)
                         else -> tokens.add(Token.Tag(word))
                     }
                 }
@@ -137,7 +132,6 @@ class ConditionParser(
         is Token.Tag -> "标签名"
         is Token.And -> "AND"
         is Token.Or -> "OR"
-        is Token.Not -> "NOT"
         is Token.LeftParen -> "("
         is Token.RightParen -> ")"
         is Token.End -> "表达式结尾"
@@ -153,24 +147,14 @@ class ConditionParser(
         return if (terms.size == 1) terms[0] else OrCondition(terms)
     }
 
-    // and_expr = not_expr ("AND" not_expr)*
+    // and_expr = atom ("AND" atom)*
     private fun parseAnd(): TaskCondition {
-        val terms = mutableListOf(parseNot())
+        val terms = mutableListOf(parseAtom())
         while (currentToken() is Token.And) {
             advance()
-            terms.add(parseNot())
+            terms.add(parseAtom())
         }
         return if (terms.size == 1) terms[0] else AndCondition(terms)
-    }
-
-    // not_expr = "NOT" atom | atom
-    private fun parseNot(): TaskCondition {
-        return if (currentToken() is Token.Not) {
-            advance()
-            NotCondition(parseAtom())
-        } else {
-            parseAtom()
-        }
     }
 
     // atom = TAG_NAME | "(" expression ")"

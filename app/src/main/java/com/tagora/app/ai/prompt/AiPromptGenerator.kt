@@ -183,15 +183,13 @@ object AiPromptGenerator {
         // ═══════════════════════════════════════════════════════════
         appendLine("## 条件表达式语法")
         appendLine()
-        appendLine("关键字 AND / OR / NOT（大小写不敏感），括号 `()` 分组。标签名含特殊字符时用双引号包裹。")
+        appendLine("关键字 AND / OR（大小写不敏感），括号 `()` 分组。标签名含特殊字符时用双引号包裹。")
         appendLine()
         appendLine("| 表达式 | 何时满足 |")
         appendLine("|--------|----------|")
         appendLine("| `运动` | 标签「运动」激活 |")
         appendLine("| `工作 AND 专注` | 两者同时激活 |")
         appendLine("| `工作 OR 学习` | 任一激活 |")
-        appendLine("| `NOT 休息` | 「休息」未激活 |")
-        appendLine("| `(工作 OR 学习) AND NOT 休息` | 工作/学习中且不在休息 |")
         appendLine("| 留空 | 始终满足 |")
         appendLine()
 
@@ -339,9 +337,6 @@ object AiPromptGenerator {
             is com.tagora.app.data.model.OrCondition -> {
                 if (condition.conditions.isEmpty()) "（无条件）"
                 else "(${condition.conditions.joinToString(" OR ") { conditionSummary(it, data) }})"
-            }
-            is com.tagora.app.data.model.NotCondition -> {
-                "NOT ${conditionSummary(condition.condition, data)}"
             }
         }
     }

@@ -6,7 +6,7 @@ import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 
 /**
- * 标签条件密封接口，支持 AND/OR/NOT 逻辑组合。
+ * 标签条件密封接口，支持 AND/OR 逻辑组合。
  * 通过多态序列化存储到 JSON，evaluate 方法根据当前激活的标签集合计算结果。
  */
 @Serializable
@@ -41,20 +41,12 @@ data class OrCondition(val conditions: List<TaskCondition> = emptyList()) : Task
         else conditions.any { it.evaluate(activeTagIds) }
 }
 
-/** 子条件取反 */
-@Serializable
-@SerialName("not")
-data class NotCondition(val condition: TaskCondition) : TaskCondition {
-    override fun evaluate(activeTagIds: Set<String>) =
-        !condition.evaluate(activeTagIds)
-}
 
 /** 递归收集条件树中所有引用的标签 ID */
 fun TaskCondition.collectTagIds(): Set<String> = when (this) {
     is MultiTagCondition -> tagIds.toSet()
     is AndCondition -> conditions.flatMap { it.collectTagIds() }.toSet()
     is OrCondition -> conditions.flatMap { it.collectTagIds() }.toSet()
-    is NotCondition -> condition.collectTagIds()
 }
 
 /** 多态序列化模块，需注册到 Json 实例 */
@@ -63,7 +55,6 @@ val TaskConditionSerializersModule = SerializersModule {
         subclass(MultiTagCondition::class, MultiTagCondition.serializer())
         subclass(AndCondition::class, AndCondition.serializer())
         subclass(OrCondition::class, OrCondition.serializer())
-        subclass(NotCondition::class, NotCondition.serializer())
     }
 }
 

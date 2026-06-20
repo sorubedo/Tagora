@@ -76,6 +76,7 @@ fun SettingsPage(
     onThemeSettings: () -> Unit,
     onAbout: () -> Unit,
     onDebugTagActivation: (() -> Unit)?,
+    onAiDebug: (() -> Unit)?,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -483,7 +484,7 @@ fun SettingsPage(
                     },
                     isLast = false,
                 ) {
-                    SettingsItem(label = "清理无用配置", description = "删除未被任何时间段或任务引用的标签，以及空标签的时间段")
+                    SettingsItem(label = "清理无用配置", description = "删除未被任何任务引用的标签和空标签时间段，预设配置中的标签受保护")
                 }
                 CardGroupItem(
                     onClick = { showResetDialog = true },
@@ -511,16 +512,29 @@ fun SettingsPage(
             }
 
             // 调试功能（仅 debug 编译可见）
-            if (BuildConfig.DEBUG && onDebugTagActivation != null) {
+            if (BuildConfig.DEBUG) {
                 CardGroup(title = { Text("调试") }) {
-                    CardGroupItem(
-                        onClick = onDebugTagActivation,
-                        isLast = true,
-                    ) {
-                        SettingsItem(
-                            label = "标签激活测试",
-                            description = "手动切换标签激活状态，测试任务条件逻辑",
-                        )
+                    if (onDebugTagActivation != null) {
+                        CardGroupItem(
+                            onClick = onDebugTagActivation,
+                            isLast = onAiDebug == null,
+                        ) {
+                            SettingsItem(
+                                label = "标签激活测试",
+                                description = "手动切换标签激活状态，测试任务条件逻辑",
+                            )
+                        }
+                    }
+                    if (onAiDebug != null) {
+                        CardGroupItem(
+                            onClick = onAiDebug,
+                            isLast = true,
+                        ) {
+                            SettingsItem(
+                                label = "AI 操作调试",
+                                description = "输入 JSON 操作表单，执行标签/时间段/任务的批量增删查改",
+                            )
+                        }
                     }
                 }
             }

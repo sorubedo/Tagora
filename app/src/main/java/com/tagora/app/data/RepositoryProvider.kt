@@ -1,7 +1,6 @@
 package com.tagora.app.data
 
 import android.content.Context
-import com.tagora.app.data.AppPreferences
 import com.tagora.app.domain.engine.TagActivationEngine
 
 /**

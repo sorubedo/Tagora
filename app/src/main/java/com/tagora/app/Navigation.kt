@@ -29,6 +29,7 @@ import com.tagora.app.ui.settings.WebDavSettingsPage
 import com.tagora.app.ui.task.TaskConditionPage
 import com.tagora.app.ui.task.TaskDetailPage
 import com.tagora.app.ui.task.TaskManagePage
+import com.tagora.app.ai.ui.AiDebugPage
 import com.tagora.app.ui.debug.DebugTagActivationPage
 import com.tagora.app.ui.timeperiod.TagDetailPage
 import com.tagora.app.ui.timeperiod.TagManagePage
@@ -99,6 +100,9 @@ fun MainNavigation() {
             onAbout = { backStack.add(About) },
             onDebugTagActivation = if (BuildConfig.DEBUG) {
               { backStack.add(DebugTagActivation) }
+            } else null,
+            onAiDebug = if (BuildConfig.DEBUG) {
+              { backStack.add(AiDebug) }
             } else null,
             modifier = Modifier.safeDrawingPadding(),
           )
@@ -190,6 +194,12 @@ fun MainNavigation() {
         if (BuildConfig.DEBUG) {
           entry<DebugTagActivation> {
             DebugTagActivationPage(
+              onBack = { backStack.removeLastOrNull() },
+              modifier = Modifier.safeDrawingPadding(),
+            )
+          }
+          entry<AiDebug> {
+            AiDebugPage(
               onBack = { backStack.removeLastOrNull() },
               modifier = Modifier.safeDrawingPadding(),
             )

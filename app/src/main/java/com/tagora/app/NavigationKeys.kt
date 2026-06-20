@@ -15,6 +15,7 @@ import kotlinx.serialization.Serializable
 @Serializable data class TaskConditionEdit(val taskId: String) : NavKey
 @Serializable data object CompletedTasks : NavKey
 @Serializable data object DebugTagActivation : NavKey
+@Serializable data object AiDebug : NavKey
 @Serializable data object WebDavSettings : NavKey
 @Serializable data object ThemeSettings : NavKey
 @Serializable data object About : NavKey

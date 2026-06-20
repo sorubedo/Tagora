@@ -22,6 +22,7 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.tagora.app.data.AppPreferences
 import com.tagora.app.ui.main.MainScreen
+import com.tagora.app.ui.settings.AboutPage
 import com.tagora.app.ui.settings.SettingsPage
 import com.tagora.app.ui.settings.ThemeSettingsPage
 import com.tagora.app.ui.settings.WebDavSettingsPage
@@ -95,6 +96,7 @@ fun MainNavigation() {
             onBack = { backStack.removeLastOrNull() },
             onWebDavSettings = { backStack.add(WebDavSettings) },
             onThemeSettings = { backStack.add(ThemeSettings) },
+            onAbout = { backStack.add(About) },
             onDebugTagActivation = if (BuildConfig.DEBUG) {
               { backStack.add(DebugTagActivation) }
             } else null,
@@ -175,6 +177,12 @@ fun MainNavigation() {
         }
         entry<ThemeSettings> {
           ThemeSettingsPage(
+            onBack = { backStack.removeLastOrNull() },
+            modifier = Modifier.safeDrawingPadding(),
+          )
+        }
+        entry<About> {
+          AboutPage(
             onBack = { backStack.removeLastOrNull() },
             modifier = Modifier.safeDrawingPadding(),
           )

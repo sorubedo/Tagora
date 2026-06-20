@@ -74,6 +74,7 @@ fun SettingsPage(
     onBack: () -> Unit,
     onWebDavSettings: () -> Unit,
     onThemeSettings: () -> Unit,
+    onAbout: () -> Unit,
     onDebugTagActivation: (() -> Unit)?,
     modifier: Modifier = Modifier,
 ) {
@@ -369,6 +370,19 @@ fun SettingsPage(
                     SettingsItem(
                         label = "主题设置",
                         description = "颜色模式、动态颜色、预设主题",
+                    )
+                }
+            }
+
+            // 关于
+            CardGroup(title = { Text("关于") }) {
+                CardGroupItem(
+                    onClick = onAbout,
+                    isLast = true,
+                ) {
+                    SettingsItem(
+                        label = "关于",
+                        description = "版本信息、项目链接与开源许可",
                     )
                 }
             }

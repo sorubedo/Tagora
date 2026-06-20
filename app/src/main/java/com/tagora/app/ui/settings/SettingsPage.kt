@@ -107,7 +107,7 @@ fun SettingsPage(
     var showPresetSwitchDialog by remember { mutableStateOf(false) }
     var pendingProviderId by remember { mutableStateOf<String?>(null) }
     var pendingProviderName by remember { mutableStateOf("") }
-    val resetUseCase = remember { ResetToDefaultUseCase(repository, taskRepo, completedTaskRepo) }
+    val resetUseCase = remember { ResetToDefaultUseCase(repository, taskRepo, completedTaskRepo, context) }
 
     // 旧 key 规范化：将 "general"/"semester" 映射为新的 ID 格式
     fun normalizePresetKey(key: String?): String? = when (key) {

@@ -33,7 +33,7 @@ fun TimePeriodListFullPage(
     val engine = RepositoryProvider.getActivationEngine(context)
     val taskRepo = RepositoryProvider.getTaskRepo(context)
     val viewModel: TimePeriodViewModel = viewModel {
-        TimePeriodViewModel(repository, engine, taskRepo)
+        TimePeriodViewModel(repository, engine, taskRepo, context)
     }
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 

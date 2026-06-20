@@ -22,6 +22,7 @@ class TimePeriodViewModel(
     private val repository: TimePeriodRepository,
     private val activationEngine: TagActivationEngine,
     private val taskRepo: TaskRepository,
+    context: android.content.Context,
 ) : ViewModel() {
 
     // 使用嵌套 combine 避免 @Suppress("UNCHECKED_CAST")（类型安全重载上限为 5）
@@ -100,7 +101,7 @@ class TimePeriodViewModel(
 
     // ── Reset to Default ──────────────────────────────────────────
 
-    private val resetToDefaultUseCase = ResetToDefaultUseCase(repository)
+    private val resetToDefaultUseCase = ResetToDefaultUseCase(repository, context = context)
 
     fun resetToDefault() {
         viewModelScope.launch { resetToDefaultUseCase.execute() }

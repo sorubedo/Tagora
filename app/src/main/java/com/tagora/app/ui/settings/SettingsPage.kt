@@ -73,6 +73,7 @@ import java.time.ZoneOffset
 fun SettingsPage(
     onBack: () -> Unit,
     onWebDavSettings: () -> Unit,
+    onThemeSettings: () -> Unit,
     onDebugTagActivation: (() -> Unit)?,
     modifier: Modifier = Modifier,
 ) {
@@ -355,6 +356,19 @@ fun SettingsPage(
                             fadeTransition = checked
                             prefs.isFadeTransitionEnabled = checked
                         },
+                    )
+                }
+            }
+
+            // 外观设置
+            CardGroup(title = { Text("外观") }) {
+                CardGroupItem(
+                    onClick = onThemeSettings,
+                    isLast = true,
+                ) {
+                    SettingsItem(
+                        label = "主题设置",
+                        description = "颜色模式、动态颜色、预设主题",
                     )
                 }
             }

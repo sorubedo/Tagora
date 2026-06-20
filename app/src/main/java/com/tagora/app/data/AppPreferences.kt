@@ -62,6 +62,28 @@ class AppPreferences(context: Context) {
         get() = prefs.getString(KEY_SELECTED_PRESET, null)
         set(value) = prefs.edit().putString(KEY_SELECTED_PRESET, value).apply()
 
+    // ── 主题设置 ──
+
+    /** 颜色模式："SYSTEM" | "LIGHT" | "DARK" */
+    var colorMode: String
+        get() = prefs.getString(KEY_COLOR_MODE, "SYSTEM") ?: "SYSTEM"
+        set(value) = prefs.edit().putString(KEY_COLOR_MODE, value).apply()
+
+    /** 是否启用动态颜色（Material You 壁纸取色） */
+    var isDynamicColorEnabled: Boolean
+        get() = prefs.getBoolean(KEY_DYNAMIC_COLOR, true)
+        set(value) = prefs.edit().putBoolean(KEY_DYNAMIC_COLOR, value).apply()
+
+    /** 当前选中的预设主题 ID */
+    var themeId: String
+        get() = prefs.getString(KEY_THEME_ID, "default") ?: "default"
+        set(value) = prefs.edit().putString(KEY_THEME_ID, value).apply()
+
+    /** 是否启用 AMOLED 暗色模式（纯黑背景） */
+    var isAmoledDarkEnabled: Boolean
+        get() = prefs.getBoolean(KEY_AMOLED_DARK, false)
+        set(value) = prefs.edit().putBoolean(KEY_AMOLED_DARK, value).apply()
+
     /**
      * 注册偏好变更监听器。
      * 返回取消监听的 Runnable。
@@ -85,5 +107,9 @@ class AppPreferences(context: Context) {
         const val KEY_PREDICTIVE_BACK = "predictive_back"
         const val KEY_FADE_TRANSITION = "fade_transition"
         const val KEY_SELECTED_PRESET = "selected_preset"
+        const val KEY_COLOR_MODE = "color_mode"
+        const val KEY_DYNAMIC_COLOR = "dynamic_color"
+        const val KEY_THEME_ID = "theme_id"
+        const val KEY_AMOLED_DARK = "amoled_dark"
     }
 }

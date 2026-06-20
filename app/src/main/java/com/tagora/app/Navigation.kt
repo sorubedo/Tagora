@@ -23,6 +23,7 @@ import androidx.navigation3.ui.NavDisplay
 import com.tagora.app.data.AppPreferences
 import com.tagora.app.ui.main.MainScreen
 import com.tagora.app.ui.settings.SettingsPage
+import com.tagora.app.ui.settings.ThemeSettingsPage
 import com.tagora.app.ui.settings.WebDavSettingsPage
 import com.tagora.app.ui.task.TaskConditionPage
 import com.tagora.app.ui.task.TaskDetailPage
@@ -93,6 +94,7 @@ fun MainNavigation() {
           SettingsPage(
             onBack = { backStack.removeLastOrNull() },
             onWebDavSettings = { backStack.add(WebDavSettings) },
+            onThemeSettings = { backStack.add(ThemeSettings) },
             onDebugTagActivation = if (BuildConfig.DEBUG) {
               { backStack.add(DebugTagActivation) }
             } else null,
@@ -167,6 +169,12 @@ fun MainNavigation() {
         }
         entry<WebDavSettings> {
           WebDavSettingsPage(
+            onBack = { backStack.removeLastOrNull() },
+            modifier = Modifier.safeDrawingPadding(),
+          )
+        }
+        entry<ThemeSettings> {
+          ThemeSettingsPage(
             onBack = { backStack.removeLastOrNull() },
             modifier = Modifier.safeDrawingPadding(),
           )

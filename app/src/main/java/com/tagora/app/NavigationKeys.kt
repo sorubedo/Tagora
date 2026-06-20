@@ -16,3 +16,4 @@ import kotlinx.serialization.Serializable
 @Serializable data object CompletedTasks : NavKey
 @Serializable data object DebugTagActivation : NavKey
 @Serializable data object WebDavSettings : NavKey
+@Serializable data object ThemeSettings : NavKey

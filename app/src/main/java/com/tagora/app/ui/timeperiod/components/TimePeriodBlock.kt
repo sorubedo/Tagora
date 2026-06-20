@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.tagora.app.data.model.Tag
 import com.tagora.app.data.model.Task
 import com.tagora.app.data.model.TimePeriod
+import com.tagora.app.data.model.locationText
 import com.tagora.app.theme.TagoraTheme
 import com.tagora.app.util.contentColorFor
 import com.tagora.app.util.minutesToTimeString
@@ -96,7 +97,10 @@ fun TimePeriodBlock(
                 ) {
                     tasks.forEach { task ->
                         Text(
-                            text = "• ${task.name}",
+                            text = buildString {
+                                append("• ${task.name}")
+                                task.locationText?.let { append("  $it") }
+                            },
                             style = MaterialTheme.typography.labelSmall,
                             color = contentColorFor(animatedBg).copy(alpha = 0.9f),
                             maxLines = 1,

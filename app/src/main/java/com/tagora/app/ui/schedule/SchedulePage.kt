@@ -51,6 +51,8 @@ import com.tagora.app.data.model.Tag
 import com.tagora.app.data.model.Task
 import com.tagora.app.data.model.TimePeriod
 import com.tagora.app.data.model.collectTagIds
+import com.tagora.app.data.model.descriptionWithoutLocation
+import com.tagora.app.data.model.locationText
 import com.tagora.app.ui.components.LoadingIndicator
 import com.tagora.app.ui.components.TopAppBarWithBack
 import androidx.compose.ui.graphics.Color as ComposeColor
@@ -518,13 +520,7 @@ private fun GridCell(
         ) {
             tasks.take(3).forEach { task ->
                 val taskTagColor = rememberTaskTagColor(task, tagsMap)
-                Text(
-                    text = task.name,
-                    style = MaterialTheme.typography.labelSmall,
-                    fontWeight = FontWeight.Medium,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    color = taskTagColor ?: MaterialTheme.colorScheme.onSurface,
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(2.dp))
@@ -533,7 +529,25 @@ private fun GridCell(
                         )
                         .clickable { onClick(task.id) }
                         .padding(horizontal = 2.dp, vertical = 1.dp),
-                )
+                ) {
+                    Text(
+                        text = task.name,
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Medium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        color = taskTagColor ?: MaterialTheme.colorScheme.onSurface,
+                    )
+                    task.locationText?.let { location ->
+                        Text(
+                            text = location,
+                            style = MaterialTheme.typography.labelSmall,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                        )
+                    }
+                }
             }
             if (tasks.size > 3) {
                 Text(

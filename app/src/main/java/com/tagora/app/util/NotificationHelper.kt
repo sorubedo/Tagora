@@ -9,6 +9,8 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.tagora.app.MainActivity
 import com.tagora.app.data.model.Task
+import com.tagora.app.data.model.descriptionWithoutLocation
+import com.tagora.app.data.model.locationText
 
 /**
  * 通知管理工具
@@ -133,7 +135,9 @@ object NotificationHelper {
      */
     private fun describeCondition(task: Task): String {
         return if (task.description.isNotBlank()) {
-            "「${task.description}」\n当前该任务的标签条件已满足"
+            val cleanDesc = task.descriptionWithoutLocation
+            val locationPart = task.locationText?.let { " ($it)" } ?: ""
+            "「$cleanDesc」$locationPart\n当前该任务的标签条件已满足"
         } else {
             "当前该任务的标签条件已满足"
         }

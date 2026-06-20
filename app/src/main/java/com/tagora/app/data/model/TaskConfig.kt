@@ -78,6 +78,26 @@ data class Task(
     val completedAt: Long? = null,       // 完成/超时的时间戳（epoch millis）
 )
 
+/** 匹配描述中的 {{地点名}} 标记 */
+private val LOCATION_REGEX = Regex("""\{\{(.+?)\}\}""")
+
+/**
+ * 提取描述中所有 {{地点}} 标记，用空格连接；无标记返回 null。
+ * 例如 "周三第5-6节{{教三楼201}}" -> "教三楼201"
+ */
+val Task.locationText: String?
+    get() = LOCATION_REGEX.findAll(description)
+        .map { it.groupValues[1] }
+        .joinToString(" ")
+        .takeIf { it.isNotBlank() }
+
+/**
+ * 去掉所有 {{地点}} 标记后的纯文本描述。
+ * 例如 "周三第5-6节{{教三楼201}}，第3-18周" -> "周三第5-6节，第3-18周"
+ */
+val Task.descriptionWithoutLocation: String
+    get() = description.replace(LOCATION_REGEX, "").trim()
+
 @Serializable
 data class TaskConfig(
     val version: Int = 2,

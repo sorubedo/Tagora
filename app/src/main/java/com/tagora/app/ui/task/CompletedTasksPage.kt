@@ -39,7 +39,9 @@ import androidx.compose.ui.unit.dp
 import com.tagora.app.data.RepositoryProvider
 import com.tagora.app.data.model.Tag
 import com.tagora.app.data.model.Task
+import com.tagora.app.data.model.descriptionWithoutLocation
 import com.tagora.app.data.model.isTimedOut
+import com.tagora.app.data.model.locationText
 import com.tagora.app.theme.DashboardColors
 import com.tagora.app.ui.components.CardGroup
 import com.tagora.app.ui.components.CardGroupItem
@@ -150,13 +152,25 @@ fun CompletedTasksPage(
                                         )
                                         if (task.description.isNotBlank()) {
                                             Spacer(Modifier.height(2.dp))
-                                            Text(
-                                                text = task.description,
-                                                style = MaterialTheme.typography.bodySmall,
-                                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                                maxLines = 1,
-                                                overflow = TextOverflow.Ellipsis,
-                                            )
+                                            val cleanDesc = task.descriptionWithoutLocation
+                                            if (cleanDesc.isNotBlank()) {
+                                                Text(
+                                                    text = cleanDesc,
+                                                    style = MaterialTheme.typography.bodySmall,
+                                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                                    maxLines = 1,
+                                                    overflow = TextOverflow.Ellipsis,
+                                                )
+                                            }
+                                            task.locationText?.let { location ->
+                                                Text(
+                                                    text = location,
+                                                    style = MaterialTheme.typography.labelSmall,
+                                                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
+                                                    maxLines = 1,
+                                                    overflow = TextOverflow.Ellipsis,
+                                                )
+                                            }
                                         }
                                         Spacer(Modifier.height(2.dp))
                                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {

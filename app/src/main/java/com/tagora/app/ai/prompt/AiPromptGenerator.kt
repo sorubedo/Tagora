@@ -98,7 +98,7 @@ object AiPromptGenerator {
         appendLine("课程/固定事件 = Task（type=fixed）。不需要新建标签或 period——三层维度标签通常已在预设中。")
         appendLine()
         appendLine("「周二第1-2节数学课（第1-16周）」→ 条件组合三层维度标签：")
-        append("""{"operations":[{"action":"create","target":"task","data":{"name":"数学课","description":"周二第1-2节，第1-16周","type":"fixed","condition":"周二 AND (第1节课 OR 第2节课) AND (第1周 OR 第2周 OR 第3周 OR 第4周 OR 第5周 OR 第6周 OR 第7周 OR 第8周 OR 第9周 OR 第10周 OR 第11周 OR 第12周 OR 第13周 OR 第14周 OR 第15周 OR 第16周)"}}]}""")
+        append("""{"operations":[{"action":"create","target":"task","data":{"name":"数学课","description":"周二第1-2节，第1-16周{{主楼305}}","type":"fixed","condition":"周二 AND (第1节课 OR 第2节课) AND (第1周 OR 第2周 OR 第3周 OR 第4周 OR 第5周 OR 第6周 OR 第7周 OR 第8周 OR 第9周 OR 第10周 OR 第11周 OR 第12周 OR 第13周 OR 第14周 OR 第15周 OR 第16周)"}}]}""")
         appendLine()
         appendLine()
 
@@ -167,6 +167,15 @@ object AiPromptGenerator {
         appendLine("""// 删除""")
         appendLine("""{"action":"delete","target":"task","data":{"id":"task-abc"}}""")
         appendLine("```")
+        appendLine()
+
+        // 地点标记
+        appendLine("### 描述中的地点标记")
+        appendLine()
+        appendLine("任务描述中可以嵌入地点/教室信息，使用 `{{地点名}}` 双花括号包裹：")
+        appendLine(" * 单个地点：`在{{A101}}教室开会` → 描述显示为「在教室开会」，地点显示为「A101」")
+        appendLine(" * 课程场景：`周三第5-6节，第3-18周{{教三楼201}}` → 地点显示为「教三楼201」")
+        appendLine(" * 多个地点：`{{三教201}}{{四教302}}` → 两个地点用空格连接显示")
         appendLine()
 
         // ═══════════════════════════════════════════════════════════
@@ -293,9 +302,9 @@ object AiPromptGenerator {
         appendLine()
         appendLine("用户：「添加周三第5-6节英语课，第3-18周」")
         appendLine()
-        appendLine("分析：课程=Task(type=fixed)。所有维度标签（周三、第5节课、第6节课、第3~18周）已由预设提供，不需新建任何标签或 period。直接用三层 AND 组合。")
+        appendLine("分析：课程=Task(type=fixed)。所有维度标签（周三、第5节课、第6节课、第3~18周）已由预设提供，不需新建任何标签或 period。直接用三层 AND 组合。地点用 {{教室名}} 嵌入描述中。")
         appendLine()
-        append("""{"operations":[{"action":"create","target":"task","data":{"name":"英语课","description":"周三第5-6节，第3-18周","type":"fixed","condition":"周三 AND (第5节课 OR 第6节课) AND (第3周 OR 第4周 OR 第5周 OR 第6周 OR 第7周 OR 第8周 OR 第9周 OR 第10周 OR 第11周 OR 第12周 OR 第13周 OR 第14周 OR 第15周 OR 第16周 OR 第17周 OR 第18周)"}}]}""")
+        append("""{"operations":[{"action":"create","target":"task","data":{"name":"英语课","description":"周三第5-6节，第3-18周{{教三楼201}}","type":"fixed","condition":"周三 AND (第5节课 OR 第6节课) AND (第3周 OR 第4周 OR 第5周 OR 第6周 OR 第7周 OR 第8周 OR 第9周 OR 第10周 OR 第11周 OR 第12周 OR 第13周 OR 第14周 OR 第15周 OR 第16周 OR 第17周 OR 第18周)"}}]}""")
         appendLine()
     }
 

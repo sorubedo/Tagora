@@ -194,9 +194,17 @@
       "tagIds": ["t-class-12"]
     },
     {
+      "id": "p-evening",
+      "name": "晚间",
+      "startMinute": 1240,
+      "endMinute": 1350,
+      "color": "#FF7986CB",
+      "tagIds": ["t-evening"]
+    },
+    {
       "id": "p-sleep-prep",
       "name": "就寝",
-      "startMinute": 1240,
+      "startMinute": 1350,
       "endMinute": 1440,
       "color": "#FF546E7A",
       "tagIds": ["t-sleep"]

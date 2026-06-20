@@ -83,6 +83,7 @@ fun SettingsPage(
     val scope = rememberCoroutineScope()
     val repository = RepositoryProvider.get(context)
     val taskRepo = RepositoryProvider.getTaskRepo(context)
+    val completedTaskRepo = RepositoryProvider.getCompletedTaskRepo(context)
 
     var showResetDialog by remember { mutableStateOf(false) }
     var showWeekDatePicker by remember { mutableStateOf(false) }
@@ -105,7 +106,7 @@ fun SettingsPage(
     var currentPreset by remember { mutableStateOf(prefs.selectedPreset) }
     var showPresetSwitchDialog by remember { mutableStateOf(false) }
     var pendingPreset by remember { mutableStateOf<PresetType?>(null) }
-    val resetUseCase = remember { ResetToDefaultUseCase(repository, taskRepo) }
+    val resetUseCase = remember { ResetToDefaultUseCase(repository, taskRepo, completedTaskRepo) }
 
     // 通知权限请求（Android 13+）
     val notificationPermissionLauncher = rememberLauncherForActivityResult(

@@ -1,5 +1,6 @@
 package com.tagora.app.domain.engine
 
+import android.content.Context
 import com.tagora.app.data.CompletedTaskRepository
 import com.tagora.app.data.TaskRepository
 import com.tagora.app.data.TimePeriodRepository
@@ -52,6 +53,7 @@ class TagActivationEngine(
     private val repository: TimePeriodRepository,
     private val taskRepo: TaskRepository,
     private val completedRepo: CompletedTaskRepository,
+    private val context: Context,
 ) {
     /** 内部激活标签状态，用于 combine 输出 */
     private val _activeTagIds = MutableStateFlow<Set<String>>(emptySet())

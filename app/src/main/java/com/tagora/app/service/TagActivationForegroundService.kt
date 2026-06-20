@@ -63,8 +63,9 @@ class TagActivationForegroundService : Service() {
 
         val engine = RepositoryProvider.getActivationEngine(this)
 
-        // 构建通知
-        val notification = buildNotification()
+        // 先启动引擎（如已运行则为 no-op），再读取当前激活标签数构建通知
+        engine.start()
+        val notification = buildNotification(engine.activeTagIds.value.size)
 
         // Android 14+ 需要明确指定 foregroundServiceType
         if (Build.VERSION.SDK_INT >= 34) {
@@ -76,9 +77,6 @@ class TagActivationForegroundService : Service() {
         } else {
             startForeground(NOTIFICATION_ID, notification)
         }
-
-        // 启动引擎（幂等操作）
-        engine.start()
 
         // 监听激活标签变化，更新通知内容
         serviceScope.launch {
@@ -152,35 +150,13 @@ class TagActivationForegroundService : Service() {
         notificationManager?.createNotificationChannel(channel)
     }
 
-    private fun buildNotification(): Notification {
-        val pendingIntent = PendingIntent.getActivity(
-            this,
-            0,
-            Intent(this, MainActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
-            },
-            PendingIntent.FLAG_UPDATE_CURRENT or (
-                if (Build.VERSION.SDK_INT >= 31) PendingIntent.FLAG_IMMUTABLE else 0
-                ),
-        )
-
-        return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("标签激活检测运行中")
-            .setContentText("正在自动检测时间段匹配…")
-            .setSmallIcon(android.R.drawable.ic_dialog_info)
-            .setOngoing(true)
-            .setPriority(NotificationCompat.PRIORITY_LOW)
-            .setContentIntent(pendingIntent)
-            .build()
-    }
-
-    private fun updateNotification(activeTagCount: Int) {
+    private fun buildNotification(activeTagCount: Int): Notification {
         val text = if (activeTagCount > 0) {
             "当前激活 $activeTagCount 个标签"
         } else {
-            "正在自动检测时间段匹配…"
+            "当前无活跃标签"
         }
-        val notification = NotificationCompat.Builder(this, CHANNEL_ID)
+        return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("标签激活检测运行中")
             .setContentText(text)
             .setSmallIcon(android.R.drawable.ic_dialog_info)
@@ -199,6 +175,10 @@ class TagActivationForegroundService : Service() {
                 )
             )
             .build()
+    }
+
+    private fun updateNotification(activeTagCount: Int) {
+        val notification = buildNotification(activeTagCount)
         notificationManager?.notify(NOTIFICATION_ID, notification)
     }
 

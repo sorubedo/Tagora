@@ -46,6 +46,7 @@
     { "id": "t-break", "name": "课间", "color": "#FF52B788" },
     { "id": "t-long-break", "name": "大课间", "color": "#FFFFA726" },
     { "id": "t-lunch", "name": "午休", "color": "#FFF2C94C" },
-    { "id": "t-dinner", "name": "晚休", "color": "#FF9B51E0" }
+    { "id": "t-dinner", "name": "晚休", "color": "#FF9B51E0" },
+    { "id": "t-evening", "name": "晚间", "color": "#FF7986CB" }
   ]
 }

@@ -51,6 +51,7 @@ object RepositoryProvider {
                 get(context),
                 getTaskRepo(context),
                 getCompletedTaskRepo(context),
+                context.applicationContext,
             ).also {
                 activationEngineInstance = it
             }

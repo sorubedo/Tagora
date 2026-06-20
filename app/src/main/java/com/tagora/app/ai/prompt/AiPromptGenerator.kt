@@ -9,8 +9,8 @@ import com.tagora.app.util.minutesToTimeString
 /**
  * 按需生成 AI 提示词内容（纯函数，无副作用，无状态）。
  *
- * 提示词文件通过 ConfigDocumentsProvider 的 openPipeHelper 在读取时才合成，
- * 不在磁盘落文件、不轮询、不监测 Flow 变更。
+ * 提示词文件由 ConfigDocumentsProvider 在配置数据变更时预先生成到磁盘，
+ * 通过 SAF 直接提供，避免运行时合成导致的 broken pipe 崩溃风险。
  */
 object AiPromptGenerator {
 

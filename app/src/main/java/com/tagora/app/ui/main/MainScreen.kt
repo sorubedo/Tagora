@@ -38,6 +38,7 @@ import com.tagora.app.Timeline
 import com.tagora.app.TimePeriodList
 import com.tagora.app.data.AppPreferences
 import com.tagora.app.data.RepositoryProvider
+import com.tagora.app.service.TagActivationForegroundService
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -54,6 +55,7 @@ fun MainScreen(
     // 引擎生命周期：MainScreen 存在期间一直运行。
     DisposableEffect(Unit) {
         engine.start()
+        TagActivationForegroundService.startIfEnabled(context)
         onDispose {
             if (!prefs.isBackgroundRunningEnabled) {
                 engine.stop()

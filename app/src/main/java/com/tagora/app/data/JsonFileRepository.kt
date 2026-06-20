@@ -54,10 +54,11 @@ open class JsonFileRepository<T>(
         _flow.value = data
     }
 
-    /** 保存数据（同时写文件和更新 Flow） */
+    /** 保存数据（同时写文件和更新 Flow，并触发 AI 提示词文件异步刷新） */
     internal suspend fun save(data: T) = withContext(Dispatchers.IO) {
         file.writeText(json.encodeToString(serializer, data))
         _flow.value = data
+        ConfigDocumentsProvider.requestPromptRefresh(context)
     }
 
     /** 读取默认配置并写入文件（首次启动或数据损坏时）。子类可覆写以定制回退行为。 */

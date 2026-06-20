@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.automirrored.filled.Label
 import androidx.compose.material.icons.filled.Settings
@@ -44,6 +45,7 @@ fun AppDrawerContent(
     onPageSelect: () -> Unit,
     onTimelineClick: () -> Unit,
     onTimePeriodListClick: () -> Unit,
+    onScheduleClick: () -> Unit,
     onTaskListClick: () -> Unit,
     onTagManageClick: () -> Unit,
     onSettingsClick: () -> Unit,
@@ -119,6 +121,19 @@ fun AppDrawerContent(
                 },
                 selected = false,
                 onClick = onTimePeriodListClick,
+                modifier = Modifier.height(56.dp),
+            )
+
+            // 课程表
+            NavigationDrawerItem(
+                icon = {
+                    Icon(Icons.Filled.CalendarMonth, contentDescription = null)
+                },
+                label = {
+                    Text("课程表", style = MaterialTheme.typography.bodyLarge)
+                },
+                selected = false,
+                onClick = onScheduleClick,
                 modifier = Modifier.height(56.dp),
             )
 
@@ -198,6 +213,7 @@ fun AppDrawerContentPreview() {
             onPageSelect = {},
             onTimelineClick = {},
             onTimePeriodListClick = {},
+            onScheduleClick = {},
             onTaskListClick = {},
             onTagManageClick = {},
             onSettingsClick = {},

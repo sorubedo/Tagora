@@ -30,6 +30,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavKey
 import com.tagora.app.CompletedTasks
+import com.tagora.app.Schedule
 import com.tagora.app.Settings
 import com.tagora.app.TagManage
 import com.tagora.app.TaskDetail
@@ -104,6 +105,10 @@ fun MainScreen(
                 onTaskListClick = {
                     scope.launch { drawerState.close() }
                     onNavigate(TaskManage)
+                },
+                onScheduleClick = {
+                    scope.launch { drawerState.close() }
+                    onNavigate(Schedule)
                 },
                 onTagManageClick = {
                     scope.launch { drawerState.close() }

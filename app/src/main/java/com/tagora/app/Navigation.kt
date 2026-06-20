@@ -34,6 +34,7 @@ import com.tagora.app.ui.debug.DebugTagActivationPage
 import com.tagora.app.ui.timeperiod.TagDetailPage
 import com.tagora.app.ui.timeperiod.TagManagePage
 import com.tagora.app.ui.timeperiod.TimePeriodDetailPage
+import com.tagora.app.ui.schedule.SchedulePage
 import com.tagora.app.ui.timeperiod.TimelinePage
 import com.tagora.app.ui.timeperiod.TimePeriodListFullPage
 
@@ -118,6 +119,13 @@ fun MainNavigation() {
           TimePeriodListFullPage(
             onBack = { backStack.removeLastOrNull() },
             onNavigate = { navKey -> backStack.add(navKey) },
+            modifier = Modifier.safeDrawingPadding(),
+          )
+        }
+        entry<Schedule> {
+          SchedulePage(
+            onBack = { backStack.removeLastOrNull() },
+            onTaskEdit = { taskId -> backStack.add(TaskDetail(taskId = taskId)) },
             modifier = Modifier.safeDrawingPadding(),
           )
         }

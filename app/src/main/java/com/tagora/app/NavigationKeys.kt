@@ -18,4 +18,5 @@ import kotlinx.serialization.Serializable
 @Serializable data object AiDebug : NavKey
 @Serializable data object WebDavSettings : NavKey
 @Serializable data object ThemeSettings : NavKey
+@Serializable data object Schedule : NavKey
 @Serializable data object About : NavKey

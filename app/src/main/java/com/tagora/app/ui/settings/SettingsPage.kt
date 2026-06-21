@@ -192,8 +192,8 @@ fun SettingsPage(
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            // 后台运行
-            CardGroup(title = { Text("后台运行") }) {
+            // 后台运行与通知
+            CardGroup(title = { Text("后台运行与通知") }) {
                 // 后台运行开关
                 CardGroupItem(isLast = false) {
                     SwitchSettingsItem(
@@ -221,6 +221,65 @@ fun SettingsPage(
                                 TagActivationForegroundService.stop(context)
                             }
                         },
+                    )
+                }
+                // 通知子项（依赖后台运行）
+                CardGroupItem(isLast = false) {
+                    SwitchSettingsItem(
+                        label = "任务激活通知",
+                        description = "标签条件满足时发送通知",
+                        checked = notificationActivated,
+                        onCheckedChange = { checked ->
+                            notificationActivated = checked
+                            prefs.isNotificationTaskActivatedEnabled = checked
+                        },
+                        enabled = backgroundRunning,
+                    )
+                }
+                CardGroupItem(isLast = false) {
+                    SwitchSettingsItem(
+                        label = "任务超时通知",
+                        description = "任务超时时发送通知",
+                        checked = notificationTimeout,
+                        onCheckedChange = { checked ->
+                            notificationTimeout = checked
+                            prefs.isNotificationTaskTimeoutEnabled = checked
+                        },
+                        enabled = backgroundRunning,
+                    )
+                }
+                CardGroupItem(isLast = false) {
+                    SwitchSettingsItem(
+                        label = "任务完成通知",
+                        description = "固定事件自动完成时发送通知",
+                        checked = notificationCompleted,
+                        onCheckedChange = { checked ->
+                            notificationCompleted = checked
+                            prefs.isNotificationTaskCompletedEnabled = checked
+                        },
+                        enabled = backgroundRunning,
+                    )
+                }
+                CardGroupItem(
+                    onClick = {
+                        try {
+                            val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                                putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                            }
+                            context.startActivity(intent)
+                        } catch (_: Exception) {
+                            // 降级：打开应用详情页
+                            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                data = Uri.parse("package:${context.packageName}")
+                            }
+                            context.startActivity(intent)
+                        }
+                    },
+                    isLast = false,
+                ) {
+                    SettingsItem(
+                        label = "通知管理",
+                        description = "前往系统设置管理通知渠道",
                     )
                 }
                 // 开机自启动开关
@@ -292,65 +351,6 @@ fun SettingsPage(
                 }
             }
 
-            // 通知设置
-            CardGroup(title = { Text("通知设置") }) {
-                CardGroupItem(isLast = false) {
-                    SwitchSettingsItem(
-                        label = "任务激活通知",
-                        description = "标签条件满足时发送通知",
-                        checked = notificationActivated,
-                        onCheckedChange = { checked ->
-                            notificationActivated = checked
-                            prefs.isNotificationTaskActivatedEnabled = checked
-                        },
-                    )
-                }
-                CardGroupItem(isLast = false) {
-                    SwitchSettingsItem(
-                        label = "任务超时通知",
-                        description = "任务超时时发送通知",
-                        checked = notificationTimeout,
-                        onCheckedChange = { checked ->
-                            notificationTimeout = checked
-                            prefs.isNotificationTaskTimeoutEnabled = checked
-                        },
-                    )
-                }
-                CardGroupItem(isLast = false) {
-                    SwitchSettingsItem(
-                        label = "任务完成通知",
-                        description = "固定事件自动完成时发送通知",
-                        checked = notificationCompleted,
-                        onCheckedChange = { checked ->
-                            notificationCompleted = checked
-                            prefs.isNotificationTaskCompletedEnabled = checked
-                        },
-                    )
-                }
-                CardGroupItem(
-                    onClick = {
-                        try {
-                            val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
-                                putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
-                            }
-                            context.startActivity(intent)
-                        } catch (_: Exception) {
-                            // 降级：打开应用详情页
-                            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                                data = Uri.parse("package:${context.packageName}")
-                            }
-                            context.startActivity(intent)
-                        }
-                    },
-                    isLast = true,
-                ) {
-                    SettingsItem(
-                        label = "通知管理",
-                        description = "前往系统设置管理通知渠道",
-                    )
-                }
-            }
-
             // 交互设置
             CardGroup(title = { Text("交互") }) {
                 CardGroupItem(isLast = false) {
@@ -390,26 +390,12 @@ fun SettingsPage(
                 }
             }
 
-            // 关于
-            CardGroup(title = { Text("关于") }) {
-                CardGroupItem(
-                    onClick = onAbout,
-                    isLast = true,
-                ) {
-                    SettingsItem(
-                        label = "关于",
-                        description = "版本信息、项目链接与开源许可",
-                    )
-                }
-            }
-
             // 配置预设
             val allProviders = remember { PresetRegistry.getAllProviders() }
             val builtinProviders = allProviders.filter { it.metadata.source == "builtin" }
             val pluginProviders = allProviders.filter { it.metadata.source == "plugin" }
 
-            // 内置预设
-            CardGroup(title = { Text("内置预设") }) {
+            CardGroup(title = { Text("配置预设") }) {
                 builtinProviders.forEachIndexed { index, provider ->
                     val metadata = provider.metadata
                     CardGroupItem(
@@ -444,49 +430,43 @@ fun SettingsPage(
                         }
                     }
                 }
-            }
-
-            // 插件预设（仅在有外部插件时显示）
-            if (pluginProviders.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(16.dp))
-                CardGroup(title = { Text("插件预设") }) {
-                    pluginProviders.forEachIndexed { index, provider ->
-                        val metadata = provider.metadata
-                        CardGroupItem(
-                            onClick = {
-                                if (normalizePresetKey(currentPreset) != metadata.id) {
-                                    pendingProviderId = metadata.id
-                                    pendingProviderName = metadata.name
-                                    showPresetSwitchDialog = true
-                                }
-                            },
-                            isLast = index == pluginProviders.lastIndex,
+                // 插件预设（仅在有外部插件时显示）
+                pluginProviders.forEachIndexed { index, provider ->
+                    val metadata = provider.metadata
+                    CardGroupItem(
+                        onClick = {
+                            if (normalizePresetKey(currentPreset) != metadata.id) {
+                                pendingProviderId = metadata.id
+                                pendingProviderName = metadata.name
+                                showPresetSwitchDialog = true
+                            }
+                        },
+                        isLast = index == pluginProviders.lastIndex,
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Text(
-                                        text = metadata.name,
-                                        style = MaterialTheme.typography.bodyLarge,
-                                    )
-                                    Text(
-                                        text = metadata.description,
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    )
-                                    Text(
-                                        text = "作者：${metadata.author}  |  版本：${metadata.version}",
-                                        style = MaterialTheme.typography.labelSmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                                    )
-                                }
-                                RadioButton(
-                                    selected = normalizePresetKey(currentPreset) == metadata.id,
-                                    onClick = null,
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = metadata.name,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                )
+                                Text(
+                                    text = metadata.description,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                                Text(
+                                    text = "作者：${metadata.author}  |  版本：${metadata.version}",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                                 )
                             }
+                            RadioButton(
+                                selected = normalizePresetKey(currentPreset) == metadata.id,
+                                onClick = null,
+                            )
                         }
                     }
                 }
@@ -576,6 +556,19 @@ fun SettingsPage(
                 }
             }
 
+            // 关于
+            CardGroup(title = { Text("关于") }) {
+                CardGroupItem(
+                    onClick = onAbout,
+                    isLast = true,
+                ) {
+                    SettingsItem(
+                        label = "关于",
+                        description = "版本信息、项目链接与开源许可",
+                    )
+                }
+            }
+
             // 调试功能（仅 debug 编译可见）
             if (BuildConfig.DEBUG) {
                 CardGroup(title = { Text("调试") }) {
@@ -653,16 +646,17 @@ fun SettingsPage(
     if (showPresetSwitchDialog && pendingProviderId != null) {
         AlertDialog(
             onDismissRequest = { showPresetSwitchDialog = false },
-            title = { Text("切换配置预设？") },
+            title = { Text("切换配置预设") },
             text = {
-                Text("切换到「${pendingProviderName}」后，当前数据不会自动改变。\n\n如需应用新预设的默认配置，请点击「重置为默认」。")
+                Text("切换到「${pendingProviderName}」预设？\n\n切换不会自动修改当前数据，你可以稍后在数据管理中手动重置。")
             },
             confirmButton = {
                 TextButton(onClick = {
                     prefs.selectedPreset = pendingProviderId
                     currentPreset = pendingProviderId
                     showPresetSwitchDialog = false
-                    Toast.makeText(context, "已切换到「${pendingProviderName}」预设", Toast.LENGTH_SHORT).show()
+                    // 切换后立即询问是否重置
+                    showResetDialog = true
                 }) {
                     Text("切换")
                 }

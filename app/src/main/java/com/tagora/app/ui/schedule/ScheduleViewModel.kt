@@ -128,9 +128,21 @@ class ScheduleViewModel(
             .filter { it.isDaily && it.tagIds.any { tag -> CLASS_TAG_REGEX.matches(tag) } }
             .sortedBy { extractClassNumber(it.tagIds) }
 
-        val weekDays = data.weeklyPeriods
-            .filter { it.isWeekly && it.dayOfWeeks.size == 1 }
-            .sortedBy { it.dayOfWeeks.first() }
+        // 固定 7 天（周一~周日），聚合所有覆盖该天的 weekly 时间段的 tagIds
+        val dayLabels = listOf("", "周一", "周二", "周三", "周四", "周五", "周六", "周日")
+        val weekDays = (1..7).map { day ->
+            val tagIds = data.weeklyPeriods
+                .filter { it.isWeekly && day in it.dayOfWeeks }
+                .flatMap { it.tagIds }
+            TimePeriod(
+                id = "fixed-day-$day",
+                name = dayLabels[day],
+                type = "weekly",
+                color = "#00000000",
+                tagIds = tagIds,
+                dayOfWeeks = listOf(day),
+            )
+        }
 
         val weeks = data.datePeriods
             .filter { it.isDate && it.tagIds.any { tag -> WEEK_TAG_REGEX.matches(tag) } }

@@ -6,6 +6,8 @@
     { "id": "t-wed", "name": "周三", "color": "#FF6B9CE1" },
     { "id": "t-thu", "name": "周四", "color": "#FF6B9CE1" },
     { "id": "t-fri", "name": "周五", "color": "#FF6B9CE1" },
+    { "id": "t-sat", "name": "周六", "color": "#FF52B788" },
+    { "id": "t-sun", "name": "周日", "color": "#FF52B788" },
     { "id": "t-weekend", "name": "周末", "color": "#FFEC407A" },
     { "id": "t-w1",  "name": "第1周",  "color": "#FF6B9CE1" },
     { "id": "t-w2",  "name": "第2周",  "color": "#FF6B9CE1" },

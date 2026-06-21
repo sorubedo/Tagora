@@ -131,7 +131,6 @@ object AiPromptGenerator {
         appendLine("|---------|------|------|")
         appendLine("| `t-class-N`（N=正整数） | 课程节次，出现在课程表网格行中 | `t-class-13` = 第13节课 |")
         appendLine("| `t-w-N`（N=正整数） | 教学周，出现在课程表周选择器中 | `t-w21` = 第21周 |")
-        appendLine("| `t-mon`~`t-fri` | 星期标签，参与课程表列的条件评估 | `t-mon` = 周一 |")
         appendLine()
         appendLine("普通标签无需指定 id，由系统自动生成。只有需要课程表识别的新课程/新周次才需手动指定。")
         appendLine()

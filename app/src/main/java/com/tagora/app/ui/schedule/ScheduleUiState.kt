@@ -16,9 +16,9 @@ sealed interface ScheduleUiState {
 
     /** 数据就绪，包含网格渲染所需的所有信息 */
     data class Ready(
-        /** 课程节次（行标签），按 startMinute 排序 */
+        /** 课程节次（行标签），按 class tag 序号排序 */
         val classPeriods: List<TimePeriod>,
-        /** 星期几（列标签），按 dayOfWeeks[0] 排序（1=周一~7=周日） */
+        /** 星期几（列标签），固定 7 天，tagIds 已聚合所有覆盖该天的 weekly 时间段 */
         val weekDays: List<TimePeriod>,
         /** 教学周（滑动目标），按 startDate 排序 */
         val weeks: List<TimePeriod>,

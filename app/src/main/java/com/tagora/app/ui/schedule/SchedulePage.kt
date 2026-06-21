@@ -47,6 +47,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavKey
 import com.tagora.app.TaskDetail
 import com.tagora.app.data.RepositoryProvider
+import java.time.LocalDate
 import com.tagora.app.data.model.Tag
 import com.tagora.app.data.model.Task
 import com.tagora.app.data.model.TimePeriod
@@ -234,7 +235,7 @@ private fun ScheduleReadyContent(
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
             )
         }
-        if (state.weekDays.isEmpty()) {
+        if (state.weekDays.all { it.tagIds.isEmpty() }) {
             Text(
                 text = "暂无星期时段数据，请确保每周时间段中包含「周一」~「周日」。",
                 style = MaterialTheme.typography.bodySmall,
@@ -242,7 +243,7 @@ private fun ScheduleReadyContent(
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
             )
         }
-        if (state.weekDays.isNotEmpty() && state.classPeriods.isNotEmpty() &&
+        if (state.classPeriods.isNotEmpty() &&
             state.cellTaskMap.isEmpty()
         ) {
             Text(
@@ -254,7 +255,7 @@ private fun ScheduleReadyContent(
         }
 
         // ── 网格 ───────────────────────────────────────────────────
-        if (state.classPeriods.isNotEmpty() && state.weekDays.isNotEmpty()) {
+        if (state.classPeriods.isNotEmpty()) {
             ScheduleGrid(
                 classPeriods = state.classPeriods,
                 weekDays = state.weekDays,
@@ -422,7 +423,7 @@ private fun DayHeaderCell(period: TimePeriod, modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center,
         ) {
-            val isToday = rememberIsToday(period)
+            val isToday = period.dayOfWeeks.first() == LocalDate.now().dayOfWeek.value
             val textColor by animateColorAsState(
                 if (isToday) MaterialTheme.colorScheme.primary
                 else MaterialTheme.colorScheme.onSurface,
@@ -569,14 +570,6 @@ private fun GridCell(
 }
 
 // ── 辅助函数 ──────────────────────────────────────────────────────
-
-@Composable
-private fun rememberIsToday(period: TimePeriod): Boolean {
-    val todayDayOfWeek = remember {
-        java.time.LocalDate.now().dayOfWeek.value
-    }
-    return period.dayOfWeeks.contains(todayDayOfWeek)
-}
 
 @Composable
 private fun rememberTaskTagColor(task: Task, tagsMap: Map<String, Tag>): ComposeColor? {

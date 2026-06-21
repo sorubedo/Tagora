@@ -52,6 +52,26 @@
       "dayOfWeeks": [5]
     },
     {
+      "id": "w-sat",
+      "name": "周六",
+      "type": "weekly",
+      "startMinute": 0,
+      "endMinute": 0,
+      "color": "#FF52B788",
+      "tagIds": ["t-sat"],
+      "dayOfWeeks": [6]
+    },
+    {
+      "id": "w-sun",
+      "name": "周日",
+      "type": "weekly",
+      "startMinute": 0,
+      "endMinute": 0,
+      "color": "#FF52B788",
+      "tagIds": ["t-sun"],
+      "dayOfWeeks": [7]
+    },
+    {
       "id": "w-weekend",
       "name": "周末",
       "type": "weekly",

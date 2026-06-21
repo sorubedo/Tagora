@@ -8,18 +8,6 @@ val CLASS_TAG_REGEX = Regex("^t-class-(\\d+)$")
 val WEEK_TAG_REGEX = Regex("^t-w(\\d+)$")
 
 @Serializable
-data class TagConfig(
-    val version: Int = 1,
-    val tags: List<Tag> = emptyList(),
-)
-
-@Serializable
-data class PeriodConfig(
-    val version: Int = 1,
-    val periods: List<TimePeriod> = emptyList(),
-)
-
-@Serializable
 data class TimePeriod(
     val id: String,
     val name: String,

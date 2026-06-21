@@ -146,9 +146,7 @@ fun SettingsPage(
     ) { uri: Uri? ->
         uri?.let {
             scope.launch {
-                val tasks = taskRepo.tasksFlow.first()
-                val completedTasks = completedTaskRepo.completedTasksFlow.first()
-                repository.exportAllToUri(it, tasks, completedTasks)
+                repository.exportAllToUri(it)
                 Toast.makeText(context, "导出成功", Toast.LENGTH_SHORT).show()
             }
         }
@@ -160,9 +158,7 @@ fun SettingsPage(
         uri?.let {
             scope.launch {
                 try {
-                    val result = repository.importAllFromUri(it)
-                    taskRepo.saveTasks(result.tasks)
-                    completedTaskRepo.saveCompletedTasks(result.completedTasks)
+                    repository.importAllFromUri(it)
                     Toast.makeText(context, "导入成功", Toast.LENGTH_SHORT).show()
                 } catch (e: Exception) {
                     Toast.makeText(context, "导入失败：${e.message}", Toast.LENGTH_SHORT).show()

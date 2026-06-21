@@ -2,11 +2,9 @@ package com.tagora.app.domain.usecase
 
 import android.content.Context
 import com.tagora.app.data.AppPreferences
-import com.tagora.app.data.AssetPathResolver
 import com.tagora.app.data.TimePeriodRepository
 import com.tagora.app.data.TaskRepository
-import com.tagora.app.data.model.PeriodConfig
-import com.tagora.app.data.model.TagConfig
+import com.tagora.app.data.model.AppConfig
 import com.tagora.app.data.model.TimePeriod
 import com.tagora.app.data.model.collectTagIds
 import com.tagora.app.data.model.isIncomplete
@@ -21,9 +19,6 @@ import kotlinx.serialization.json.Json
  *
  * 以当前选中预设的默认配置为白名单保护基线，从活跃任务出发做迭代收敛，
  * 找出真正被需要的 tag/period 连通分量，其余用户创建的孤立项全部清理。
- *
- * - 无用标签：不属于「有用连通分量」且不在默认配置中的标签
- * - 无用时间段：tagIds 全部被清空的时间段（清理了无用 tag 后的连带结果）
  */
 class CleanupUnusedUseCase(
     private val repository: TimePeriodRepository,
@@ -47,47 +42,37 @@ class CleanupUnusedUseCase(
 
     /**
      * 从当前预设读取默认标签 ID 集合（仅读取，不写入）。
-     * 优先使用 PresetRegistry（支持内置和插件预设），失败时回退到 AssetPathResolver。
      */
     private suspend fun loadDefaultTagIds(): Set<String> {
         val provider = PresetRegistry.getSelectedProvider(prefs)
         if (provider != null) {
             return runCatching {
-                json.decodeFromString<TagConfig>(provider.readFile("tags.json")).tags.map { it.id }.toSet()
+                json.decodeFromString<AppConfig>(provider.readFile("config.json")).tags.map { it.id }.toSet()
             }.getOrDefault(emptySet())
         }
         // 回退到 assets 直接读取
         return runCatching {
-            val assetName = AssetPathResolver.resolve(prefs?.selectedPreset, "tags.json")
-            val text = context.assets.open(assetName).bufferedReader().use { it.readText() }
-            json.decodeFromString<TagConfig>(text).tags.map { it.id }.toSet()
+            val text = context.assets.open("default_config.json").bufferedReader().use { it.readText() }
+            json.decodeFromString<AppConfig>(text).tags.map { it.id }.toSet()
         }.getOrDefault(emptySet())
     }
 
-    /** @see loadDefaultTagIds */
     private suspend fun loadDefaultPeriodIds(): Set<String> {
         val provider = PresetRegistry.getSelectedProvider(prefs)
         if (provider != null) {
-            val ids = mutableSetOf<String>()
-            val fileNames = listOf("periods.json", "weekly_periods.json", "date_periods.json", "deadline_periods.json")
-            for (name in fileNames) {
-                runCatching {
-                    json.decodeFromString<PeriodConfig>(provider.readFile(name)).periods.mapTo(ids) { it.id }
-                }
-            }
-            return ids
+            return runCatching {
+                val config = json.decodeFromString<AppConfig>(provider.readFile("config.json"))
+                (config.periods + config.weeklyPeriods + config.datePeriods + config.deadlinePeriods)
+                    .map { it.id }.toSet()
+            }.getOrDefault(emptySet())
         }
         // 回退到 assets 直接读取
-        val ids = mutableSetOf<String>()
-        val fileNames = listOf("periods.json", "weekly_periods.json", "date_periods.json", "deadline_periods.json")
-        for (name in fileNames) {
-            val assetName = AssetPathResolver.resolve(prefs?.selectedPreset, name)
-            runCatching {
-                val text = context.assets.open(assetName).bufferedReader().use { it.readText() }
-                json.decodeFromString<PeriodConfig>(text).periods.mapTo(ids) { it.id }
-            }
-        }
-        return ids
+        return runCatching {
+            val text = context.assets.open("default_config.json").bufferedReader().use { it.readText() }
+            val config = json.decodeFromString<AppConfig>(text)
+            (config.periods + config.weeklyPeriods + config.datePeriods + config.deadlinePeriods)
+                .map { it.id }.toSet()
+        }.getOrDefault(emptySet())
     }
 
     suspend fun execute(): Result = withContext(Dispatchers.IO) {

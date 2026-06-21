@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tagora.app.data.AppPreferences
 import com.tagora.app.data.RepositoryProvider
-import com.tagora.app.data.model.MergedFullConfig
+import com.tagora.app.data.model.AppConfig
 import com.tagora.app.data.model.WebDavConfig
 import com.tagora.app.util.WebDavClient
 import com.tagora.app.util.WebDavFileInfo
@@ -84,17 +84,14 @@ class WebDavViewModel(
         viewModelScope.launch {
             try {
                 val repository = RepositoryProvider.get(appContext)
-                val taskRepo = RepositoryProvider.getTaskRepo(appContext)
-                val completedTaskRepo = RepositoryProvider.getCompletedTaskRepo(appContext)
-
-                val data = MergedFullConfig(
+                val data = AppConfig(
                     tags = repository.tagsFlow.first(),
                     periods = repository.periodsFlow.first(),
                     weeklyPeriods = repository.weeklyPeriodsFlow.first(),
                     datePeriods = repository.datePeriodsFlow.first(),
                     deadlinePeriods = repository.deadlinePeriodsFlow.first(),
-                    tasks = taskRepo.tasksFlow.first(),
-                    completedTasks = completedTaskRepo.completedTasksFlow.first(),
+                    tasks = repository.tasksFlow.first(),
+                    completedTasks = repository.completedTasksFlow.first(),
                 )
                 val jsonStr = json.encodeToString(data)
                 val timestamp = LocalDateTime.now()
@@ -143,18 +140,16 @@ class WebDavViewModel(
                 val client = WebDavClient(_uiState.value.webDavConfig)
                 val downloadResult = client.download(file.name)
                 val jsonStr = String(downloadResult.getOrThrow())
-                val config = json.decodeFromString<MergedFullConfig>(jsonStr)
+                val config = json.decodeFromString<AppConfig>(jsonStr)
                 val repository = RepositoryProvider.get(appContext)
-                val taskRepo = RepositoryProvider.getTaskRepo(appContext)
-                val completedTaskRepo = RepositoryProvider.getCompletedTaskRepo(appContext)
 
                 repository.saveTags(config.tags)
                 repository.savePeriods(config.periods)
                 repository.saveWeeklyPeriods(config.weeklyPeriods)
                 repository.saveDatePeriods(config.datePeriods)
                 repository.saveDeadlinePeriods(config.deadlinePeriods)
-                taskRepo.saveTasks(config.tasks)
-                completedTaskRepo.saveCompletedTasks(config.completedTasks)
+                repository.saveTasks(config.tasks)
+                repository.saveCompletedTasks(config.completedTasks)
                 Toast.makeText(appContext, "恢复成功", Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
                 Toast.makeText(appContext, "恢复失败：${e.message}", Toast.LENGTH_SHORT).show()

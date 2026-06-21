@@ -14,7 +14,6 @@ import com.tagora.app.data.TimePeriodRepository
  *
  * **重要**：重置期间会暂停 [TagActivationEngine]，避免各 repo 逐个 save 时
  * 触发引擎在数据不一致的中间态重算，导致任务被误判为"永远无法满足"。
- * 全部保存完成后再恢复引擎运行。
  */
 class ResetToDefaultUseCase(
     private val repository: TimePeriodRepository,
@@ -34,7 +33,7 @@ class ResetToDefaultUseCase(
         if (wasRunning) engine.stop()
 
         try {
-            // 先加载所有默认数据
+            // 加载所有默认数据
             val tags = repository.loadDefaultTags()
             val periods = repository.loadDefaultPeriods()
             val weeklyPeriods = repository.loadDefaultWeeklyPeriods()
@@ -51,14 +50,13 @@ class ResetToDefaultUseCase(
                 }
             }
 
-            // 保存 tags 和 periods（引擎已暂停，顺序安全）
+            // 保存（引擎已暂停，顺序安全）
             repository.saveTags(tags)
             repository.savePeriods(periods)
             repository.saveWeeklyPeriods(weeklyPeriods)
             repository.saveDatePeriods(datePeriods)
             repository.saveDeadlinePeriods(deadlinePeriods)
         } finally {
-            // 确保引擎恢复，即使重置过程中抛异常也不会静默停止
             if (wasRunning) engine.start()
         }
     }

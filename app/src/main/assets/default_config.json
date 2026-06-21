@@ -1,0 +1,647 @@
+{
+  "version": 5,
+  "tags": [
+    {
+      "id": "t-mon",
+      "name": "周一",
+      "color": "#FF6B9CE1"
+    },
+    {
+      "id": "t-tue",
+      "name": "周二",
+      "color": "#FF6B9CE1"
+    },
+    {
+      "id": "t-wed",
+      "name": "周三",
+      "color": "#FF6B9CE1"
+    },
+    {
+      "id": "t-thu",
+      "name": "周四",
+      "color": "#FF6B9CE1"
+    },
+    {
+      "id": "t-fri",
+      "name": "周五",
+      "color": "#FF6B9CE1"
+    },
+    {
+      "id": "t-sat",
+      "name": "周六",
+      "color": "#FF52B788"
+    },
+    {
+      "id": "t-sun",
+      "name": "周日",
+      "color": "#FF52B788"
+    },
+    {
+      "id": "t-workday",
+      "name": "工作日",
+      "color": "#FF42A5F5"
+    },
+    {
+      "id": "t-weekend",
+      "name": "休息日",
+      "color": "#FFEC407A"
+    },
+    {
+      "id": "t-work",
+      "name": "工作",
+      "color": "#FFE17055"
+    },
+    {
+      "id": "t-focus",
+      "name": "专注",
+      "color": "#FF9B51E0"
+    },
+    {
+      "id": "t-rest",
+      "name": "休息",
+      "color": "#FF52B788"
+    },
+    {
+      "id": "t-exercise",
+      "name": "运动",
+      "color": "#FFFFA726"
+    },
+    {
+      "id": "t-study",
+      "name": "学习",
+      "color": "#FF3DD6D0"
+    },
+    {
+      "id": "t-meal",
+      "name": "用餐",
+      "color": "#FFF07B72"
+    },
+    {
+      "id": "t-commute",
+      "name": "通勤",
+      "color": "#FF8D6E63"
+    },
+    {
+      "id": "t-w1",
+      "name": "第1周",
+      "color": "#FF6B9CE1"
+    },
+    {
+      "id": "t-w2",
+      "name": "第2周",
+      "color": "#FF6B9CE1"
+    },
+    {
+      "id": "t-w3",
+      "name": "第3周",
+      "color": "#FF6B9CE1"
+    },
+    {
+      "id": "t-w4",
+      "name": "第4周",
+      "color": "#FF6B9CE1"
+    },
+    {
+      "id": "t-w5",
+      "name": "第5周",
+      "color": "#FF6B9CE1"
+    },
+    {
+      "id": "t-w6",
+      "name": "第6周",
+      "color": "#FF6B9CE1"
+    },
+    {
+      "id": "t-w7",
+      "name": "第7周",
+      "color": "#FF6B9CE1"
+    },
+    {
+      "id": "t-w8",
+      "name": "第8周",
+      "color": "#FF6B9CE1"
+    },
+    {
+      "id": "t-w9",
+      "name": "第9周",
+      "color": "#FF6B9CE1"
+    },
+    {
+      "id": "t-w10",
+      "name": "第10周",
+      "color": "#FF6B9CE1"
+    },
+    {
+      "id": "t-w11",
+      "name": "第11周",
+      "color": "#FF6B9CE1"
+    },
+    {
+      "id": "t-w12",
+      "name": "第12周",
+      "color": "#FF6B9CE1"
+    },
+    {
+      "id": "t-w13",
+      "name": "第13周",
+      "color": "#FF6B9CE1"
+    },
+    {
+      "id": "t-w14",
+      "name": "第14周",
+      "color": "#FF6B9CE1"
+    },
+    {
+      "id": "t-w15",
+      "name": "第15周",
+      "color": "#FF6B9CE1"
+    },
+    {
+      "id": "t-w16",
+      "name": "第16周",
+      "color": "#FF6B9CE1"
+    },
+    {
+      "id": "t-w17",
+      "name": "第17周",
+      "color": "#FF6B9CE1"
+    },
+    {
+      "id": "t-w18",
+      "name": "第18周",
+      "color": "#FF6B9CE1"
+    },
+    {
+      "id": "t-w19",
+      "name": "第19周",
+      "color": "#FF6B9CE1"
+    },
+    {
+      "id": "t-w20",
+      "name": "第20周",
+      "color": "#FF6B9CE1"
+    }
+  ],
+  "periods": [
+    {
+      "id": "p-morning",
+      "name": "晨间",
+      "startMinute": 360,
+      "endMinute": 480,
+      "color": "#FFF2C94C",
+      "tagIds": [
+        "t-exercise",
+        "t-focus",
+        "t-commute"
+      ]
+    },
+    {
+      "id": "p-work",
+      "name": "工作时间",
+      "startMinute": 480,
+      "endMinute": 720,
+      "color": "#FF6B9CE1",
+      "tagIds": [
+        "t-work",
+        "t-focus"
+      ]
+    },
+    {
+      "id": "p-lunch",
+      "name": "午休",
+      "startMinute": 720,
+      "endMinute": 840,
+      "color": "#FF52B788",
+      "tagIds": [
+        "t-meal",
+        "t-rest"
+      ]
+    },
+    {
+      "id": "p-afternoon",
+      "name": "午后",
+      "startMinute": 840,
+      "endMinute": 1080,
+      "color": "#FFE17055",
+      "tagIds": [
+        "t-work",
+        "t-study"
+      ]
+    },
+    {
+      "id": "p-evening",
+      "name": "晚间",
+      "startMinute": 1080,
+      "endMinute": 1320,
+      "color": "#FF9B51E0",
+      "tagIds": [
+        "t-rest",
+        "t-exercise",
+        "t-study",
+        "t-commute"
+      ]
+    },
+    {
+      "id": "p-night",
+      "name": "深夜",
+      "startMinute": 1320,
+      "endMinute": 360,
+      "color": "#FF546E7A",
+      "tagIds": [
+        "t-rest"
+      ]
+    }
+  ],
+  "weeklyPeriods": [
+    {
+      "id": "w-mon",
+      "name": "周一",
+      "type": "weekly",
+      "startMinute": 0,
+      "endMinute": 0,
+      "color": "#FF6B9CE1",
+      "tagIds": [
+        "t-mon",
+        "t-workday"
+      ],
+      "dayOfWeeks": [
+        1
+      ]
+    },
+    {
+      "id": "w-tue",
+      "name": "周二",
+      "type": "weekly",
+      "startMinute": 0,
+      "endMinute": 0,
+      "color": "#FF6B9CE1",
+      "tagIds": [
+        "t-tue",
+        "t-workday"
+      ],
+      "dayOfWeeks": [
+        2
+      ]
+    },
+    {
+      "id": "w-wed",
+      "name": "周三",
+      "type": "weekly",
+      "startMinute": 0,
+      "endMinute": 0,
+      "color": "#FF6B9CE1",
+      "tagIds": [
+        "t-wed",
+        "t-workday"
+      ],
+      "dayOfWeeks": [
+        3
+      ]
+    },
+    {
+      "id": "w-thu",
+      "name": "周四",
+      "type": "weekly",
+      "startMinute": 0,
+      "endMinute": 0,
+      "color": "#FF6B9CE1",
+      "tagIds": [
+        "t-thu",
+        "t-workday"
+      ],
+      "dayOfWeeks": [
+        4
+      ]
+    },
+    {
+      "id": "w-fri",
+      "name": "周五",
+      "type": "weekly",
+      "startMinute": 0,
+      "endMinute": 0,
+      "color": "#FF6B9CE1",
+      "tagIds": [
+        "t-fri",
+        "t-workday"
+      ],
+      "dayOfWeeks": [
+        5
+      ]
+    },
+    {
+      "id": "w-sat",
+      "name": "周六",
+      "type": "weekly",
+      "startMinute": 0,
+      "endMinute": 0,
+      "color": "#FF52B788",
+      "tagIds": [
+        "t-sat",
+        "t-weekend"
+      ],
+      "dayOfWeeks": [
+        6
+      ]
+    },
+    {
+      "id": "w-sun",
+      "name": "周日",
+      "type": "weekly",
+      "startMinute": 0,
+      "endMinute": 0,
+      "color": "#FF52B788",
+      "tagIds": [
+        "t-sun",
+        "t-weekend"
+      ],
+      "dayOfWeeks": [
+        7
+      ]
+    }
+  ],
+  "datePeriods": [
+    {
+      "id": "dw-1",
+      "name": "第1周",
+      "type": "date",
+      "startMinute": 0,
+      "endMinute": 0,
+      "color": "#FF6B9CE1",
+      "tagIds": [
+        "t-w1"
+      ],
+      "dayOfWeeks": [],
+      "startDate": "2026-03-02",
+      "endDate": "2026-03-08"
+    },
+    {
+      "id": "dw-2",
+      "name": "第2周",
+      "type": "date",
+      "startMinute": 0,
+      "endMinute": 0,
+      "color": "#FFE17055",
+      "tagIds": [
+        "t-w2"
+      ],
+      "dayOfWeeks": [],
+      "startDate": "2026-03-09",
+      "endDate": "2026-03-15"
+    },
+    {
+      "id": "dw-3",
+      "name": "第3周",
+      "type": "date",
+      "startMinute": 0,
+      "endMinute": 0,
+      "color": "#FF52B788",
+      "tagIds": [
+        "t-w3"
+      ],
+      "dayOfWeeks": [],
+      "startDate": "2026-03-16",
+      "endDate": "2026-03-22"
+    },
+    {
+      "id": "dw-4",
+      "name": "第4周",
+      "type": "date",
+      "startMinute": 0,
+      "endMinute": 0,
+      "color": "#FF9B51E0",
+      "tagIds": [
+        "t-w4"
+      ],
+      "dayOfWeeks": [],
+      "startDate": "2026-03-23",
+      "endDate": "2026-03-29"
+    },
+    {
+      "id": "dw-5",
+      "name": "第5周",
+      "type": "date",
+      "startMinute": 0,
+      "endMinute": 0,
+      "color": "#FFF2C94C",
+      "tagIds": [
+        "t-w5"
+      ],
+      "dayOfWeeks": [],
+      "startDate": "2026-03-30",
+      "endDate": "2026-04-05"
+    },
+    {
+      "id": "dw-6",
+      "name": "第6周",
+      "type": "date",
+      "startMinute": 0,
+      "endMinute": 0,
+      "color": "#FF6B9CE1",
+      "tagIds": [
+        "t-w6"
+      ],
+      "dayOfWeeks": [],
+      "startDate": "2026-04-06",
+      "endDate": "2026-04-12"
+    },
+    {
+      "id": "dw-7",
+      "name": "第7周",
+      "type": "date",
+      "startMinute": 0,
+      "endMinute": 0,
+      "color": "#FFE17055",
+      "tagIds": [
+        "t-w7"
+      ],
+      "dayOfWeeks": [],
+      "startDate": "2026-04-13",
+      "endDate": "2026-04-19"
+    },
+    {
+      "id": "dw-8",
+      "name": "第8周",
+      "type": "date",
+      "startMinute": 0,
+      "endMinute": 0,
+      "color": "#FF52B788",
+      "tagIds": [
+        "t-w8"
+      ],
+      "dayOfWeeks": [],
+      "startDate": "2026-04-20",
+      "endDate": "2026-04-26"
+    },
+    {
+      "id": "dw-9",
+      "name": "第9周",
+      "type": "date",
+      "startMinute": 0,
+      "endMinute": 0,
+      "color": "#FF9B51E0",
+      "tagIds": [
+        "t-w9"
+      ],
+      "dayOfWeeks": [],
+      "startDate": "2026-04-27",
+      "endDate": "2026-05-03"
+    },
+    {
+      "id": "dw-10",
+      "name": "第10周",
+      "type": "date",
+      "startMinute": 0,
+      "endMinute": 0,
+      "color": "#FFF2C94C",
+      "tagIds": [
+        "t-w10"
+      ],
+      "dayOfWeeks": [],
+      "startDate": "2026-05-04",
+      "endDate": "2026-05-10"
+    },
+    {
+      "id": "dw-11",
+      "name": "第11周",
+      "type": "date",
+      "startMinute": 0,
+      "endMinute": 0,
+      "color": "#FF6B9CE1",
+      "tagIds": [
+        "t-w11"
+      ],
+      "dayOfWeeks": [],
+      "startDate": "2026-05-11",
+      "endDate": "2026-05-17"
+    },
+    {
+      "id": "dw-12",
+      "name": "第12周",
+      "type": "date",
+      "startMinute": 0,
+      "endMinute": 0,
+      "color": "#FFE17055",
+      "tagIds": [
+        "t-w12"
+      ],
+      "dayOfWeeks": [],
+      "startDate": "2026-05-18",
+      "endDate": "2026-05-24"
+    },
+    {
+      "id": "dw-13",
+      "name": "第13周",
+      "type": "date",
+      "startMinute": 0,
+      "endMinute": 0,
+      "color": "#FF52B788",
+      "tagIds": [
+        "t-w13"
+      ],
+      "dayOfWeeks": [],
+      "startDate": "2026-05-25",
+      "endDate": "2026-05-31"
+    },
+    {
+      "id": "dw-14",
+      "name": "第14周",
+      "type": "date",
+      "startMinute": 0,
+      "endMinute": 0,
+      "color": "#FF9B51E0",
+      "tagIds": [
+        "t-w14"
+      ],
+      "dayOfWeeks": [],
+      "startDate": "2026-06-01",
+      "endDate": "2026-06-07"
+    },
+    {
+      "id": "dw-15",
+      "name": "第15周",
+      "type": "date",
+      "startMinute": 0,
+      "endMinute": 0,
+      "color": "#FFF2C94C",
+      "tagIds": [
+        "t-w15"
+      ],
+      "dayOfWeeks": [],
+      "startDate": "2026-06-08",
+      "endDate": "2026-06-14"
+    },
+    {
+      "id": "dw-16",
+      "name": "第16周",
+      "type": "date",
+      "startMinute": 0,
+      "endMinute": 0,
+      "color": "#FF6B9CE1",
+      "tagIds": [
+        "t-w16"
+      ],
+      "dayOfWeeks": [],
+      "startDate": "2026-06-15",
+      "endDate": "2026-06-21"
+    },
+    {
+      "id": "dw-17",
+      "name": "第17周",
+      "type": "date",
+      "startMinute": 0,
+      "endMinute": 0,
+      "color": "#FFE17055",
+      "tagIds": [
+        "t-w17"
+      ],
+      "dayOfWeeks": [],
+      "startDate": "2026-06-22",
+      "endDate": "2026-06-28"
+    },
+    {
+      "id": "dw-18",
+      "name": "第18周",
+      "type": "date",
+      "startMinute": 0,
+      "endMinute": 0,
+      "color": "#FF52B788",
+      "tagIds": [
+        "t-w18"
+      ],
+      "dayOfWeeks": [],
+      "startDate": "2026-06-29",
+      "endDate": "2026-07-05"
+    },
+    {
+      "id": "dw-19",
+      "name": "第19周",
+      "type": "date",
+      "startMinute": 0,
+      "endMinute": 0,
+      "color": "#FF9B51E0",
+      "tagIds": [
+        "t-w19"
+      ],
+      "dayOfWeeks": [],
+      "startDate": "2026-07-06",
+      "endDate": "2026-07-12"
+    },
+    {
+      "id": "dw-20",
+      "name": "第20周",
+      "type": "date",
+      "startMinute": 0,
+      "endMinute": 0,
+      "color": "#FFF2C94C",
+      "tagIds": [
+        "t-w20"
+      ],
+      "dayOfWeeks": [],
+      "startDate": "2026-07-13",
+      "endDate": "2026-07-19"
+    }
+  ],
+  "deadlinePeriods": [],
+  "tasks": [],
+  "completedTasks": []
+}

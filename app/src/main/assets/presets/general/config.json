@@ -1,0 +1,266 @@
+{
+  "version": 5,
+  "tags": [
+    {
+      "id": "t-mon",
+      "name": "周一",
+      "color": "#FF6B9CE1"
+    },
+    {
+      "id": "t-tue",
+      "name": "周二",
+      "color": "#FF6B9CE1"
+    },
+    {
+      "id": "t-wed",
+      "name": "周三",
+      "color": "#FF6B9CE1"
+    },
+    {
+      "id": "t-thu",
+      "name": "周四",
+      "color": "#FF6B9CE1"
+    },
+    {
+      "id": "t-fri",
+      "name": "周五",
+      "color": "#FF6B9CE1"
+    },
+    {
+      "id": "t-sat",
+      "name": "周六",
+      "color": "#FF52B788"
+    },
+    {
+      "id": "t-sun",
+      "name": "周日",
+      "color": "#FF52B788"
+    },
+    {
+      "id": "t-workday",
+      "name": "工作日",
+      "color": "#FF42A5F5"
+    },
+    {
+      "id": "t-weekend",
+      "name": "休息日",
+      "color": "#FFEC407A"
+    },
+    {
+      "id": "t-work",
+      "name": "工作",
+      "color": "#FFE17055"
+    },
+    {
+      "id": "t-focus",
+      "name": "专注",
+      "color": "#FF9B51E0"
+    },
+    {
+      "id": "t-rest",
+      "name": "休息",
+      "color": "#FF52B788"
+    },
+    {
+      "id": "t-exercise",
+      "name": "运动",
+      "color": "#FFFFA726"
+    },
+    {
+      "id": "t-study",
+      "name": "学习",
+      "color": "#FF3DD6D0"
+    },
+    {
+      "id": "t-meal",
+      "name": "用餐",
+      "color": "#FFF07B72"
+    },
+    {
+      "id": "t-commute",
+      "name": "通勤",
+      "color": "#FF8D6E63"
+    }
+  ],
+  "periods": [
+    {
+      "id": "p-morning",
+      "name": "晨间",
+      "startMinute": 360,
+      "endMinute": 480,
+      "color": "#FFF2C94C",
+      "tagIds": [
+        "t-exercise",
+        "t-focus",
+        "t-commute"
+      ]
+    },
+    {
+      "id": "p-work",
+      "name": "工作时间",
+      "startMinute": 480,
+      "endMinute": 720,
+      "color": "#FF6B9CE1",
+      "tagIds": [
+        "t-work",
+        "t-focus"
+      ]
+    },
+    {
+      "id": "p-lunch",
+      "name": "午休",
+      "startMinute": 720,
+      "endMinute": 840,
+      "color": "#FF52B788",
+      "tagIds": [
+        "t-meal",
+        "t-rest"
+      ]
+    },
+    {
+      "id": "p-afternoon",
+      "name": "午后",
+      "startMinute": 840,
+      "endMinute": 1080,
+      "color": "#FFE17055",
+      "tagIds": [
+        "t-work",
+        "t-study"
+      ]
+    },
+    {
+      "id": "p-evening",
+      "name": "晚间",
+      "startMinute": 1080,
+      "endMinute": 1320,
+      "color": "#FF9B51E0",
+      "tagIds": [
+        "t-rest",
+        "t-exercise",
+        "t-study",
+        "t-commute"
+      ]
+    },
+    {
+      "id": "p-night",
+      "name": "深夜",
+      "startMinute": 1320,
+      "endMinute": 360,
+      "color": "#FF546E7A",
+      "tagIds": [
+        "t-rest"
+      ]
+    }
+  ],
+  "weeklyPeriods": [
+    {
+      "id": "w-mon",
+      "name": "周一",
+      "type": "weekly",
+      "startMinute": 0,
+      "endMinute": 0,
+      "color": "#FF6B9CE1",
+      "tagIds": [
+        "t-mon",
+        "t-workday"
+      ],
+      "dayOfWeeks": [
+        1
+      ]
+    },
+    {
+      "id": "w-tue",
+      "name": "周二",
+      "type": "weekly",
+      "startMinute": 0,
+      "endMinute": 0,
+      "color": "#FF6B9CE1",
+      "tagIds": [
+        "t-tue",
+        "t-workday"
+      ],
+      "dayOfWeeks": [
+        2
+      ]
+    },
+    {
+      "id": "w-wed",
+      "name": "周三",
+      "type": "weekly",
+      "startMinute": 0,
+      "endMinute": 0,
+      "color": "#FF6B9CE1",
+      "tagIds": [
+        "t-wed",
+        "t-workday"
+      ],
+      "dayOfWeeks": [
+        3
+      ]
+    },
+    {
+      "id": "w-thu",
+      "name": "周四",
+      "type": "weekly",
+      "startMinute": 0,
+      "endMinute": 0,
+      "color": "#FF6B9CE1",
+      "tagIds": [
+        "t-thu",
+        "t-workday"
+      ],
+      "dayOfWeeks": [
+        4
+      ]
+    },
+    {
+      "id": "w-fri",
+      "name": "周五",
+      "type": "weekly",
+      "startMinute": 0,
+      "endMinute": 0,
+      "color": "#FF6B9CE1",
+      "tagIds": [
+        "t-fri",
+        "t-workday"
+      ],
+      "dayOfWeeks": [
+        5
+      ]
+    },
+    {
+      "id": "w-sat",
+      "name": "周六",
+      "type": "weekly",
+      "startMinute": 0,
+      "endMinute": 0,
+      "color": "#FF52B788",
+      "tagIds": [
+        "t-sat",
+        "t-weekend"
+      ],
+      "dayOfWeeks": [
+        6
+      ]
+    },
+    {
+      "id": "w-sun",
+      "name": "周日",
+      "type": "weekly",
+      "startMinute": 0,
+      "endMinute": 0,
+      "color": "#FF52B788",
+      "tagIds": [
+        "t-sun",
+        "t-weekend"
+      ],
+      "dayOfWeeks": [
+        7
+      ]
+    }
+  ],
+  "datePeriods": [],
+  "deadlinePeriods": [],
+  "tasks": [],
+  "completedTasks": []
+}

@@ -5,55 +5,39 @@ import com.tagora.app.data.preset.PresetRegistry
 import com.tagora.app.domain.engine.TagActivationEngine
 
 /**
- * 全局共享 Repository 单例
- * 确保所有页面使用同一个 Repository 实例
- * 从而共享同一个 MutableStateFlow，任何页面的修改都能即时反映到所有页面
+ * 全局共享 Repository 单例。
+ * 使用单一的 [AppConfigRepository] 管理所有配置数据，
+ * 同时实现 [TimePeriodRepository]、[TaskRepository]、[CompletedTaskRepository] 三个接口。
  */
 object RepositoryProvider {
 
     @Volatile
-    private var instance: DefaultTimePeriodRepository? = null
-
-    @Volatile
-    private var taskInstance: DefaultTaskRepository? = null
+    private var appConfigRepo: AppConfigRepository? = null
 
     @Volatile
     private var activationEngineInstance: TagActivationEngine? = null
 
     @Volatile
-    private var completedTaskInstance: DefaultCompletedTaskRepository? = null
-
-    @Volatile
     private var prefs: AppPreferences? = null
 
-    fun get(context: Context): DefaultTimePeriodRepository {
-        return instance ?: synchronized(this) {
-            // 确保 PresetRegistry 和 AppPreferences 初始化
+    fun get(context: Context): AppConfigRepository {
+        return appConfigRepo ?: synchronized(this) {
             ensureInitialized(context.applicationContext)
-            instance ?: DefaultTimePeriodRepository(
+            appConfigRepo ?: AppConfigRepository(
                 context.applicationContext,
                 prefs = prefs,
             ).also {
-                instance = it
+                appConfigRepo = it
             }
         }
     }
 
-    fun getTaskRepo(context: Context): DefaultTaskRepository {
-        return taskInstance ?: synchronized(this) {
-            ensureInitialized(context.applicationContext)
-            taskInstance ?: DefaultTaskRepository(
-                context.applicationContext,
-                prefs = prefs,
-            ).also {
-                taskInstance = it
-            }
-        }
-    }
+    fun getTaskRepo(context: Context): AppConfigRepository = get(context)
+
+    fun getCompletedTaskRepo(context: Context): AppConfigRepository = get(context)
 
     /**
      * 获取标签激活引擎单例。
-     * 引擎依赖 TimePeriodRepository，因此通过 [get] 获取 repo 后传入。
      */
     fun getActivationEngine(context: Context): TagActivationEngine {
         return activationEngineInstance ?: synchronized(this) {
@@ -64,18 +48,6 @@ object RepositoryProvider {
                 context.applicationContext,
             ).also {
                 activationEngineInstance = it
-            }
-        }
-    }
-
-    fun getCompletedTaskRepo(context: Context): DefaultCompletedTaskRepository {
-        return completedTaskInstance ?: synchronized(this) {
-            ensureInitialized(context.applicationContext)
-            completedTaskInstance ?: DefaultCompletedTaskRepository(
-                context.applicationContext,
-                prefs = prefs,
-            ).also {
-                completedTaskInstance = it
             }
         }
     }

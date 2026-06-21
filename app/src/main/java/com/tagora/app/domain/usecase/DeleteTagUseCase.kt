@@ -5,7 +5,6 @@ import kotlinx.coroutines.flow.first
 
 /**
  * 删除标签并清理所有时间段类型中对该标签的引用。
- * 统一了 TimePeriodViewModel.deleteTag() 和 TagDetailPage 删除按钮中的重复逻辑。
  */
 class DeleteTagUseCase(
     private val repository: TimePeriodRepository,

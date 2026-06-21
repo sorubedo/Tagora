@@ -89,8 +89,3 @@ val Task.locationText: String?
 val Task.descriptionWithoutLocation: String
     get() = description.replace(LOCATION_REGEX, "").trim()
 
-@Serializable
-data class TaskConfig(
-    val version: Int = 2,
-    val tasks: List<Task> = emptyList(),
-)

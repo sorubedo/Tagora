@@ -21,26 +21,15 @@ class BuiltInAssetPresetProvider(
 ) : PresetProvider {
 
     override suspend fun listFiles(): List<String> = withContext(Dispatchers.IO) {
-        if (assetDir.isEmpty()) {
-            // 根级：返回所有 default_*.json 文件，去掉 "default_" 前缀
-            context.assets.list("")
-                ?.filter { it.startsWith("default_") && it.endsWith(".json") }
-                ?.map { it.removePrefix("default_") }
-                ?.sorted()
-                ?: emptyList()
-        } else {
-            context.assets.list(assetDir)
-                ?.filter { it.endsWith(".json") }
-                ?.sorted()
-                ?: emptyList()
-        }
+        // 单文件模式：仅返回 config.json
+        listOf("config.json")
     }
 
     override suspend fun readFile(fileName: String): String = withContext(Dispatchers.IO) {
         val fullPath = if (assetDir.isEmpty()) {
-            "default_$fileName"
+            "default_config.json"
         } else {
-            "$assetDir/$fileName"
+            "$assetDir/config.json"
         }
         context.assets.open(fullPath).bufferedReader().use { it.readText() }
     }

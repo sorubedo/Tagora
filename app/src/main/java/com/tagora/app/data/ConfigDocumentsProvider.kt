@@ -11,10 +11,8 @@ import android.provider.DocumentsContract.Root
 import android.provider.DocumentsProvider
 import android.util.Log
 import com.tagora.app.ai.prompt.AiPromptGenerator
-import com.tagora.app.data.model.PeriodConfig
-import com.tagora.app.data.model.TagConfig
+import com.tagora.app.data.model.AppConfig
 import com.tagora.app.data.model.TaskConditionSerializersModule
-import com.tagora.app.data.model.TaskConfig
 import com.tagora.app.data.model.isIncomplete
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -198,13 +196,14 @@ class ConfigDocumentsProvider : DocumentsProvider() {
 
             synchronized(promptLock) {
                 try {
-                    val tags = readConfig<TagConfig>(filesDir, "tags.json", json)?.tags ?: emptyList()
-                    val daily = readConfig<PeriodConfig>(filesDir, "periods.json", json)?.periods ?: emptyList()
-                    val weekly = readConfig<PeriodConfig>(filesDir, "weekly_periods.json", json)?.periods ?: emptyList()
-                    val date = readConfig<PeriodConfig>(filesDir, "date_periods.json", json)?.periods ?: emptyList()
-                    val deadline = readConfig<PeriodConfig>(filesDir, "deadline_periods.json", json)?.periods ?: emptyList()
-                    val tasks = readConfig<TaskConfig>(filesDir, "tasks.json", json)?.tasks?.filter { it.isIncomplete } ?: emptyList()
-                    val completed = readConfig<TaskConfig>(filesDir, "completed_tasks.json", json)?.tasks ?: emptyList()
+                    val config = readConfig<AppConfig>(filesDir, "config.json", json)
+                    val tags = config?.tags ?: emptyList()
+                    val daily = config?.periods ?: emptyList()
+                    val weekly = config?.weeklyPeriods ?: emptyList()
+                    val date = config?.datePeriods ?: emptyList()
+                    val deadline = config?.deadlinePeriods ?: emptyList()
+                    val tasks = config?.tasks?.filter { it.isIncomplete } ?: emptyList()
+                    val completed = config?.completedTasks ?: emptyList()
 
                     val content = AiPromptGenerator.generate(
                         AiPromptGenerator.PromptData(tags, daily, weekly, date, deadline, tasks, completed),

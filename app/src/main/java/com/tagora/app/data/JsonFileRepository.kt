@@ -18,7 +18,7 @@ import java.io.File
  * 封装了"从 filesDir 读取 JSON → MutableStateFlow 暴露 → 保存时同时写文件和更新 Flow"的通用模式。
  * 子类只需指定文件名、序列化器和默认 asset 资源名即可。
  *
- * @param T 持久化的顶层数据类型（如 TaskConfig、TagConfig、PeriodConfig）
+ * @param T 持久化的顶层数据类型（如 AppConfig）
  */
 open class JsonFileRepository<T>(
     protected val context: Context,

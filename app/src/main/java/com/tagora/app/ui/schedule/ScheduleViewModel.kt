@@ -7,6 +7,8 @@ import com.tagora.app.data.TimePeriodRepository
 import com.tagora.app.data.model.Tag
 import com.tagora.app.data.model.Task
 import com.tagora.app.data.model.TimePeriod
+import com.tagora.app.data.model.CLASS_TAG_REGEX
+import com.tagora.app.data.model.WEEK_TAG_REGEX
 import com.tagora.app.data.model.collectTagIds
 import com.tagora.app.data.model.isDaily
 import com.tagora.app.data.model.isDate
@@ -54,14 +56,9 @@ class ScheduleViewModel(
         val tasks: List<Task>,
     )
 
-    // ── 课程节次分类正则 ──────────────────────────────────────────
+    // ── 课程节次分类正则（定义见 TimePeriodConfig.kt） ──────────────
 
     private companion object {
-        /** 匹配 "t-class-N" 格式的标签（N 为 1~12 的数字） */
-        val CLASS_TAG_REGEX = Regex("^t-class-(\\d+)$")
-        /** 匹配 "t-w-N" 格式的标签（N 为 1~20 的数字） */
-        val WEEK_TAG_REGEX = Regex("^t-w(\\d+)$")
-
         /** 从标签 ID 中提取序号，用于排序 */
         fun extractClassNumber(tagIds: List<String>): Int =
             tagIds.firstNotNullOfOrNull { id ->
@@ -92,7 +89,7 @@ class ScheduleViewModel(
                 if (detectedIndex >= 0) {
                     _currentWeekIndex.value = detectedIndex
                 }
-                // 如果不在 1~20 周内，保持默认 0（第 1 周）
+                // 如果不在任何教学周内，保持默认 0（第 1 周）
             }
         }
     }

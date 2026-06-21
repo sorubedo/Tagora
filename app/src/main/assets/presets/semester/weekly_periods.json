@@ -8,7 +8,7 @@
       "startMinute": 0,
       "endMinute": 0,
       "color": "#FF6B9CE1",
-      "tagIds": ["t-mon", "t-workday"],
+      "tagIds": ["t-mon"],
       "dayOfWeeks": [1]
     },
     {
@@ -18,7 +18,7 @@
       "startMinute": 0,
       "endMinute": 0,
       "color": "#FF6B9CE1",
-      "tagIds": ["t-tue", "t-workday"],
+      "tagIds": ["t-tue"],
       "dayOfWeeks": [2]
     },
     {
@@ -28,7 +28,7 @@
       "startMinute": 0,
       "endMinute": 0,
       "color": "#FF6B9CE1",
-      "tagIds": ["t-wed", "t-workday"],
+      "tagIds": ["t-wed"],
       "dayOfWeeks": [3]
     },
     {
@@ -38,7 +38,7 @@
       "startMinute": 0,
       "endMinute": 0,
       "color": "#FF6B9CE1",
-      "tagIds": ["t-thu", "t-workday"],
+      "tagIds": ["t-thu"],
       "dayOfWeeks": [4]
     },
     {
@@ -48,28 +48,18 @@
       "startMinute": 0,
       "endMinute": 0,
       "color": "#FF6B9CE1",
-      "tagIds": ["t-fri", "t-workday"],
+      "tagIds": ["t-fri"],
       "dayOfWeeks": [5]
     },
     {
-      "id": "w-sat",
-      "name": "周六",
+      "id": "w-weekend",
+      "name": "周末",
       "type": "weekly",
       "startMinute": 0,
       "endMinute": 0,
-      "color": "#FF52B788",
-      "tagIds": ["t-sat", "t-weekend"],
-      "dayOfWeeks": [6]
-    },
-    {
-      "id": "w-sun",
-      "name": "周日",
-      "type": "weekly",
-      "startMinute": 0,
-      "endMinute": 0,
-      "color": "#FF52B788",
-      "tagIds": ["t-sun", "t-weekend"],
-      "dayOfWeeks": [7]
+      "color": "#FFEC407A",
+      "tagIds": ["t-weekend"],
+      "dayOfWeeks": [6, 7]
     }
   ]
 }

@@ -2,28 +2,12 @@
   "version": 1,
   "periods": [
     {
-      "id": "p-sleep",
-      "name": "睡眠",
-      "startMinute": 0,
-      "endMinute": 500,
-      "color": "#FF546E7A",
-      "tagIds": ["t-sleep"]
-    },
-    {
       "id": "p-class-1",
       "name": "第1节",
       "startMinute": 500,
       "endMinute": 540,
       "color": "#FFEF5350",
       "tagIds": ["t-class-1"]
-    },
-    {
-      "id": "p-break-1",
-      "name": "课间",
-      "startMinute": 540,
-      "endMinute": 545,
-      "color": "#FF52B788",
-      "tagIds": ["t-break"]
     },
     {
       "id": "p-class-2",
@@ -34,28 +18,12 @@
       "tagIds": ["t-class-2"]
     },
     {
-      "id": "p-long-break-1",
-      "name": "大课间",
-      "startMinute": 585,
-      "endMinute": 610,
-      "color": "#FFFFA726",
-      "tagIds": ["t-long-break"]
-    },
-    {
       "id": "p-class-3",
       "name": "第3节",
       "startMinute": 610,
       "endMinute": 650,
       "color": "#FFFF7043",
       "tagIds": ["t-class-3"]
-    },
-    {
-      "id": "p-break-2",
-      "name": "课间",
-      "startMinute": 650,
-      "endMinute": 655,
-      "color": "#FF52B788",
-      "tagIds": ["t-break"]
     },
     {
       "id": "p-class-4",
@@ -66,28 +34,12 @@
       "tagIds": ["t-class-4"]
     },
     {
-      "id": "p-lunch",
-      "name": "午休",
-      "startMinute": 695,
-      "endMinute": 810,
-      "color": "#FFF2C94C",
-      "tagIds": ["t-lunch"]
-    },
-    {
       "id": "p-class-5",
       "name": "第5节",
       "startMinute": 810,
       "endMinute": 850,
       "color": "#FF66BB6A",
       "tagIds": ["t-class-5"]
-    },
-    {
-      "id": "p-break-3",
-      "name": "课间",
-      "startMinute": 850,
-      "endMinute": 855,
-      "color": "#FF52B788",
-      "tagIds": ["t-break"]
     },
     {
       "id": "p-class-6",
@@ -98,28 +50,12 @@
       "tagIds": ["t-class-6"]
     },
     {
-      "id": "p-long-break-2",
-      "name": "大课间",
-      "startMinute": 895,
-      "endMinute": 920,
-      "color": "#FFFFA726",
-      "tagIds": ["t-long-break"]
-    },
-    {
       "id": "p-class-7",
       "name": "第7节",
       "startMinute": 920,
       "endMinute": 960,
       "color": "#FF42A5F5",
       "tagIds": ["t-class-7"]
-    },
-    {
-      "id": "p-break-4",
-      "name": "课间",
-      "startMinute": 960,
-      "endMinute": 965,
-      "color": "#FF52B788",
-      "tagIds": ["t-break"]
     },
     {
       "id": "p-class-8",
@@ -130,28 +66,12 @@
       "tagIds": ["t-class-8"]
     },
     {
-      "id": "p-break-5",
-      "name": "课间",
-      "startMinute": 1005,
-      "endMinute": 1010,
-      "color": "#FF52B788",
-      "tagIds": ["t-break"]
-    },
-    {
       "id": "p-class-9",
       "name": "第9节",
       "startMinute": 1010,
       "endMinute": 1050,
       "color": "#FFAB47BC",
       "tagIds": ["t-class-9"]
-    },
-    {
-      "id": "p-dinner",
-      "name": "晚休",
-      "startMinute": 1050,
-      "endMinute": 1110,
-      "color": "#FF9B51E0",
-      "tagIds": ["t-dinner"]
     },
     {
       "id": "p-class-10",
@@ -162,14 +82,6 @@
       "tagIds": ["t-class-10"]
     },
     {
-      "id": "p-break-6",
-      "name": "课间",
-      "startMinute": 1150,
-      "endMinute": 1155,
-      "color": "#FF52B788",
-      "tagIds": ["t-break"]
-    },
-    {
       "id": "p-class-11",
       "name": "第11节",
       "startMinute": 1155,
@@ -178,36 +90,12 @@
       "tagIds": ["t-class-11"]
     },
     {
-      "id": "p-break-7",
-      "name": "课间",
-      "startMinute": 1195,
-      "endMinute": 1200,
-      "color": "#FF52B788",
-      "tagIds": ["t-break"]
-    },
-    {
       "id": "p-class-12",
       "name": "第12节",
       "startMinute": 1200,
       "endMinute": 1240,
       "color": "#FF7E57C2",
       "tagIds": ["t-class-12"]
-    },
-    {
-      "id": "p-evening",
-      "name": "晚间",
-      "startMinute": 1240,
-      "endMinute": 1350,
-      "color": "#FF7986CB",
-      "tagIds": ["t-evening"]
-    },
-    {
-      "id": "p-sleep-prep",
-      "name": "就寝",
-      "startMinute": 1350,
-      "endMinute": 1440,
-      "color": "#FF546E7A",
-      "tagIds": ["t-sleep"]
     }
   ]
 }

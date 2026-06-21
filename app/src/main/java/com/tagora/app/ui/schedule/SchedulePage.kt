@@ -228,7 +228,7 @@ private fun ScheduleReadyContent(
         // ── 提示信息 ───────────────────────────────────────────────
         if (state.classPeriods.isEmpty()) {
             Text(
-                text = "暂无课程节次数据，请确保每日时间段中包含课程节次（如「第1节」~「第12节」）。",
+                text = "暂无课程节次数据，请确保每日时间段中包含课程节次（如「第1节」「第2节」等）。",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),

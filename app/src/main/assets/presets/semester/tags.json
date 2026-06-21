@@ -6,10 +6,7 @@
     { "id": "t-wed", "name": "周三", "color": "#FF6B9CE1" },
     { "id": "t-thu", "name": "周四", "color": "#FF6B9CE1" },
     { "id": "t-fri", "name": "周五", "color": "#FF6B9CE1" },
-    { "id": "t-sat", "name": "周六", "color": "#FF52B788" },
-    { "id": "t-sun", "name": "周日", "color": "#FF52B788" },
-    { "id": "t-workday", "name": "工作日", "color": "#FF42A5F5" },
-    { "id": "t-weekend", "name": "休息日", "color": "#FFEC407A" },
+    { "id": "t-weekend", "name": "周末", "color": "#FFEC407A" },
     { "id": "t-w1",  "name": "第1周",  "color": "#FF6B9CE1" },
     { "id": "t-w2",  "name": "第2周",  "color": "#FF6B9CE1" },
     { "id": "t-w3",  "name": "第3周",  "color": "#FF6B9CE1" },
@@ -41,12 +38,6 @@
     { "id": "t-class-9",  "name": "第9节课",  "color": "#FFAB47BC" },
     { "id": "t-class-10", "name": "第10节课", "color": "#FFAB47BC" },
     { "id": "t-class-11", "name": "第11节课", "color": "#FF7E57C2" },
-    { "id": "t-class-12", "name": "第12节课", "color": "#FF7E57C2" },
-    { "id": "t-sleep", "name": "睡眠", "color": "#FF546E7A" },
-    { "id": "t-break", "name": "课间", "color": "#FF52B788" },
-    { "id": "t-long-break", "name": "大课间", "color": "#FFFFA726" },
-    { "id": "t-lunch", "name": "午休", "color": "#FFF2C94C" },
-    { "id": "t-dinner", "name": "晚休", "color": "#FF9B51E0" },
-    { "id": "t-evening", "name": "晚间", "color": "#FF7986CB" }
+    { "id": "t-class-12", "name": "第12节课", "color": "#FF7E57C2" }
   ]
 }

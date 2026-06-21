@@ -2,6 +2,11 @@ package com.tagora.app.data.model
 
 import kotlinx.serialization.Serializable
 
+/** 匹配 "t-class-N" 格式的标签（N 为正整数） */
+val CLASS_TAG_REGEX = Regex("^t-class-(\\d+)$")
+/** 匹配 "t-w-N" 格式的标签（N 为正整数） */
+val WEEK_TAG_REGEX = Regex("^t-w(\\d+)$")
+
 @Serializable
 data class TagConfig(
     val version: Int = 1,

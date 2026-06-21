@@ -76,6 +76,7 @@ class AiSheetExecutor(
         val validationErrors = mutableListOf<String>()
 
         // 3a. 检查标签操作的基本合法性 + 暂用占位 ID
+        val seenCustomIds = mutableSetOf<String>() // 追踪同批次内已出现的自定义 ID
         for ((i, op) in tagOps.withIndex()) {
             when (op.action) {
                 "create" -> {
@@ -83,7 +84,19 @@ class AiSheetExecutor(
                     if (nameToId.containsKey(name)) {
                         validationErrors.add("标签[${i}]：标签名 '$name' 已存在")
                     } else {
-                        nameToId[name] = "__new_tag_${i}__" // 占位，仅用于验证阶段
+                        // 如果提供了自定义 ID，验证唯一性
+                        val customId = op.data.id?.takeIf { it.isNotBlank() }
+                        if (customId != null) {
+                            if (existingTags.any { it.id == customId }) {
+                                validationErrors.add("标签[${i}]：ID '$customId' 已被占用")
+                            } else if (!seenCustomIds.add(customId)) {
+                                validationErrors.add("标签[${i}]：ID '$customId' 与本批次其他标签重复")
+                            } else {
+                                nameToId[name] = customId
+                            }
+                        } else {
+                            nameToId[name] = "__new_tag_${i}__"
+                        }
                     }
                 }
                 "update" -> {
@@ -215,7 +228,8 @@ class AiSheetExecutor(
         for (op in ops) {
             when (op.action) {
                 "create" -> {
-                    val id = newId()
+                    // 使用自定义 ID（若提供），否则自动生成
+                    val id = op.data.id?.takeIf { it.isNotBlank() } ?: newId()
                     val tag = Tag(id = id, name = op.data.name!!, color = op.data.color!!)
                     tags.add(tag)
                     created.add(tag)

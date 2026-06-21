@@ -54,7 +54,9 @@ fun TagDetailPage(
 
     var name by remember { mutableStateOf("") }
     var selectedColor by remember { mutableStateOf(PresetPeriodColors[0]) }
+    var idInput by remember { mutableStateOf(newId()) }
     var loaded by remember { mutableStateOf(false) }
+    var idError by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(Unit) {
         val tags = repository.tagsFlow.first()
@@ -62,6 +64,7 @@ fun TagDetailPage(
         if (tag != null) {
             name = tag.name
             selectedColor = tag.color
+            idInput = tag.id
         }
         loaded = true
     }
@@ -87,6 +90,30 @@ fun TagDetailPage(
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
+            CardGroup(title = { Text("标签 ID") }) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        text = if (isNew) "新建时可自定义 ID，保存后不可修改" else "编辑已有标签时 ID 不可修改",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = idInput,
+                        onValueChange = { newValue ->
+                            idInput = newValue
+                            idError = null
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true,
+                        readOnly = !isNew,
+                        isError = idError != null,
+                        supportingText = idError?.let { { Text(it) } },
+                        placeholder = { Text("例如：t-class-13、t-w21") },
+                    )
+                }
+            }
+
             CardGroup {
                 FormItem(
                     label = { Text("标签名") },
@@ -118,16 +145,20 @@ fun TagDetailPage(
                 onClick = {
                     scope.launch {
                         val tags = repository.tagsFlow.first()
-                        val id = tagId ?: newId()
-                        val tag = Tag(id = id, name = name.ifBlank { "未命名" }, color = selectedColor)
-                        val newTags = if (isNew) tags + tag else tags.map { if (it.id == id) tag else it }
+                        // 新建时校验 ID 唯一性
+                        if (isNew && tags.any { it.id == idInput }) {
+                            idError = "此 ID 已被占用，请使用其他 ID"
+                            return@launch
+                        }
+                        val tag = Tag(id = idInput, name = name.ifBlank { "未命名" }, color = selectedColor)
+                        val newTags = if (isNew) tags + tag else tags.map { if (it.id == idInput) tag else it }
                         repository.saveTags(newTags)
                         Toast.makeText(context, "已保存", Toast.LENGTH_SHORT).show()
                         onBack()
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = name.isNotBlank(),
+                enabled = name.isNotBlank() && idInput.isNotBlank(),
             ) { Text("保存") }
 
             if (!isNew) {

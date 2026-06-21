@@ -53,6 +53,7 @@ fun TagEditor(
     onSave: (Tag) -> Unit,
     onDelete: (String) -> Unit,
     onDismiss: () -> Unit,
+    allTagIds: List<String> = emptyList(),
 ) {
     val sheetState = rememberModalBottomSheetState()
 
@@ -60,6 +61,8 @@ fun TagEditor(
     var selectedColor by remember(tag) {
         mutableStateOf(tag?.color ?: PresetPeriodColors[0])
     }
+    var idInput by remember(tag) { mutableStateOf(tag?.id ?: newId()) }
+    var idError by remember { mutableStateOf<String?>(null) }
     var showCustomColor by remember { mutableStateOf(false) }
     var customColorHex by remember { mutableStateOf("") }
 
@@ -77,6 +80,28 @@ fun TagEditor(
             Text(
                 text = if (tag != null) "编辑标签" else "新建标签",
                 style = MaterialTheme.typography.titleLarge,
+            )
+
+            // 标签 ID
+            val isNew = tag == null
+            Text(
+                text = if (isNew) "新建时可自定义 ID，保存后不可修改" else "编辑已有标签时 ID 不可修改",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            OutlinedTextField(
+                value = idInput,
+                onValueChange = { newValue ->
+                    idInput = newValue
+                    idError = null
+                },
+                label = { Text("标签 ID") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                readOnly = !isNew,
+                isError = idError != null,
+                supportingText = idError?.let { { Text(it) } },
+                placeholder = { Text("例如：t-class-13、t-w21") },
             )
 
             // 标签名
@@ -159,17 +184,21 @@ fun TagEditor(
                 }
                 Button(
                     onClick = {
-                        val id = tag?.id ?: newId()
+                        // 新建时校验 ID 唯一性
+                        if (isNew && idInput in allTagIds) {
+                            idError = "此 ID 已被占用，请使用其他 ID"
+                            return@Button
+                        }
                         onSave(
                             Tag(
-                                id = id,
+                                id = idInput,
                                 name = name.ifBlank { "未命名" },
                                 color = selectedColor,
                             )
                         )
                     },
                     modifier = Modifier.weight(1f),
-                    enabled = name.isNotBlank(),
+                    enabled = name.isNotBlank() && idInput.isNotBlank(),
                 ) {
                     Text("保存")
                 }

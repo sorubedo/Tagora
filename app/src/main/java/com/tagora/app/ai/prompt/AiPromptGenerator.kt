@@ -115,7 +115,7 @@ object AiPromptGenerator {
         // Tag
         appendLine("### Tag")
         appendLine("```")
-        appendLine("""// 创建：name、color 必填""")
+        appendLine("""// 创建：name、color 必填，id 可选（不填自动生成）""")
         appendLine("""{"action":"create","target":"tag","data":{"name":"专注","color":"#FF9B51E0"}}""")
         appendLine("""// 查询：字段全可选，全空=列出全部""")
         appendLine("""{"action":"query","target":"tag","data":{}}""")
@@ -124,6 +124,16 @@ object AiPromptGenerator {
         appendLine("""// 删除：id 必填，同时清理所有时间段中的引用""")
         appendLine("""{"action":"delete","target":"tag","data":{"id":"t-commute"}}""")
         appendLine("```")
+        appendLine()
+        appendLine("**创建时可指定 id 以实现特殊功能：**")
+        appendLine()
+        appendLine("| ID 格式 | 用途 | 示例 |")
+        appendLine("|---------|------|------|")
+        appendLine("| `t-class-N`（N=正整数） | 课程节次，出现在课程表网格行中 | `t-class-13` = 第13节课 |")
+        appendLine("| `t-w-N`（N=正整数） | 教学周，出现在课程表周选择器中 | `t-w21` = 第21周 |")
+        appendLine("| `t-mon`~`t-fri` | 星期标签，参与课程表列的条件评估 | `t-mon` = 周一 |")
+        appendLine()
+        appendLine("普通标签无需指定 id，由系统自动生成。只有需要课程表识别的新课程/新周次才需手动指定。")
         appendLine()
 
         // Period

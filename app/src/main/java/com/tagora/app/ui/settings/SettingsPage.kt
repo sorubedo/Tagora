@@ -53,6 +53,7 @@ import androidx.core.content.ContextCompat
 import com.tagora.app.BuildConfig
 import com.tagora.app.data.AppPreferences
 import com.tagora.app.data.RepositoryProvider
+import com.tagora.app.data.model.WEEK_TAG_REGEX
 import com.tagora.app.data.preset.PresetRegistry
 import com.tagora.app.domain.usecase.CleanupUnusedUseCase
 import com.tagora.app.domain.usecase.ResetToDefaultUseCase
@@ -134,7 +135,9 @@ fun SettingsPage(
     var weekFirstDate by remember { mutableStateOf("2026-03-02") }
     LaunchedEffect(Unit) {
         val datePeriods = repository.datePeriodsFlow.first()
-        val week1 = datePeriods.find { it.tagIds.contains("t-w1") }
+        val week1 = datePeriods
+            .filter { it.tagIds.any { tag -> WEEK_TAG_REGEX.matches(tag) } }
+            .minByOrNull { it.startDate ?: "9999-12-31" }
         weekFirstDate = week1?.startDate ?: "2026-03-02"
     }
 
@@ -623,7 +626,9 @@ fun SettingsPage(
                             resetUseCase.execute(includeTasks = true)
                             // 更新第一周日期显示
                             val datePeriods = repository.loadDefaultDatePeriods()
-                            val week1 = datePeriods.find { it.tagIds.contains("t-w1") }
+                            val week1 = datePeriods
+                                .filter { it.tagIds.any { tag -> WEEK_TAG_REGEX.matches(tag) } }
+                                .minByOrNull { it.startDate ?: "9999-12-31" }
                             weekFirstDate = week1?.startDate ?: "2026-03-02"
                             Toast.makeText(context, "已重置为「${presetDisplayName}」预设", Toast.LENGTH_SHORT).show()
                         } catch (e: Exception) {
